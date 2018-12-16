@@ -1,0 +1,8 @@
+auto-save-list
+backup
+elpa
+.lsp*
+config.el
+projectile*
+recentf
+smex-items

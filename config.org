@@ -1,0 +1,437 @@
+* Setup
+** Configure package sources
+
+Add repositories from which we'll load packages. I prefer to live on the bleeding edge so have only enabled melpa. Setting =package-enable-at-startup= to =nil= prevents a second package load and slightly improves startup time.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+  (setq package-enable-at-startup nil)
+  (package-initialize)
+  (package-refresh-contents)
+#+END_SRC
+
+** Bootstrap use-package
+
+If =use-package= is not installed, install it.
+
+#+BEGIN_SRC emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
+#+END_SRC
+
+By default all packages should be installed from package manager as that's the usual path. This is equivalent to setting =:ensure t= on each call to =use-package=. To disable set =:ensure nil= (this is done automatically for any packages using =:load-path= so shouldn't generally be needed).
+
+#+BEGIN_SRC emacs-lisp
+  (setq use-package-always-ensure t)
+#+END_SRC
+
+** Benchmark startup
+
+=benchmark-init= records startup time by package so we can debug. It only records things after it's initialised, so put as early in config as possible.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package benchmark-init
+    :config
+    ;; To disable collection of benchmark data after init is done.
+    (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
+  (add-hook 'after-init-hook
+            (lambda () (message "loaded in %s" (emacs-init-time))))
+#+END_SRC
+
+** Increase garbage collector threshold
+
+The default garbage collection threshold is 800kB, increasing this to 10MB for startup increases speed (from 11.0s -> 9.7s when I tested).
+
+#+BEGIN_SRC emacs-lisp
+  (setq gc-cons-threshold 10000000)
+
+  ;; Restore after startup
+  (add-hook 'after-init-hook
+            (lambda ()
+              (setq gc-cons-threshold 1000000)
+              (message "gc-cons-threshold restored to %S"
+                       gc-cons-threshold)))
+#+END_SRC
+
+** Make it easy to edit this file
+
+#+BEGIN_SRC emacs-lisp
+  (defun find-config ()
+    "Edit config.org"
+    (interactive)
+    (find-file (expand-file-name "config.org" user-emacs-directory)))
+
+  (global-set-key (kbd "C-c I") 'find-config)
+#+END_SRC
+
+** Performance trick
+
+Garbage-collect on focus-out, Emacs should feel snappier.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'focus-out-hook #'garbage-collect)
+#+END_SRC
+
+* Preferences
+
+Don't display the help screen on startup.
+
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-screen t)
+#+END_SRC
+
+I prefer lines to wrap.
+
+#+BEGIN_SRC emacs-lisp
+  (global-visual-line-mode 1)
+#+END_SRC
+
+Let's turn off unwanted window decoration.
+
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tooltip-mode    -1)
+  (menu-bar-mode   -1)
+#+END_SRC
+
+I don't want the error bell.
+
+#+BEGIN_SRC emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+END_SRC
+
+Make the =yes or no= prompts shorter.
+
+#+BEGIN_SRC emacs-lisp
+  (defalias 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+A common frustration with new Emacs users is the =filename#= files created. This centralises the backup files created as you edit.
+
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+    backup-by-copying t    ; Don't delink hardlinks
+    version-control t      ; Use version numbers on backups
+    delete-old-versions t  ; Automatically delete excess backups
+    kept-new-versions 20   ; how many of the newest versions to keep
+    kept-old-versions 5    ; and how many of the old
+    )
+#+END_SRC
+
+I usually don't want tabs, if I do I can set this buffer-local to =t=. If I just want one tab then use =C-q= (=quoted-insert=) to insert as a literal.
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+END_SRC
+
+I *never* want whitespace at the end of lines. Remove it on save.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+
+* Interface
+** Evil mode
+
+Evil-mode emulates Vim in Emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil
+    :init
+    (setq evil-want-integration t) ;; required by evil-collection
+    (setq evil-want-keybinding nil) ;; required by evil-collection
+    (setq evil-search-module 'evil-search)
+    (setq evil-ex-complete-emacs-commands nil)
+    (setq evil-vsplit-window-right t) ;; like vim's 'splitright'
+    (setq evil-split-window-below t) ;; like vim's 'splitbelow'
+    (setq evil-shift-round nil)
+    (setq evil-want-C-u-scroll t)
+    :config
+    (evil-mode))
+
+  ;; remap Escape to something else to quit insert mode
+  (use-package evil-escape
+    :after evil
+    :init
+    (setq-default evil-escape-delay 0.2)
+    (setq-default evil-escape-unordered-key-sequence t)
+    (setq-default evil-escape-key-sequence "jk")
+    (evil-escape-mode))
+
+
+  ;; vim-like keybindings everywhere in emacs
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
+
+  ;; gc operator, like vim-commentary
+  (use-package evil-commentary
+    :after evil
+    :bind (:map evil-normal-state-map
+                ("gc" . evil-commentary)))
+
+  ;; visual hints while editing
+  (use-package evil-goggles
+    :after evil
+    :config
+    (evil-goggles-use-diff-faces)
+    (evil-goggles-mode))
+
+  ;; like vim-surround
+  (use-package evil-surround
+    :after evil
+    :commands
+    (evil-surround-edit
+     evil-Surround-edit
+     evil-surround-region
+     evil-Surround-region)
+    :init
+    (evil-define-key 'operator global-map "s" 'evil-surround-edit)
+    (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
+    (evil-define-key 'visual global-map "S" 'evil-surround-region)
+    (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
+#+END_SRC
+
+** Command completion
+
+=smart M-x= suggests =M-x= commands based on recency and frequency. I don't tend to use it directly but =counsel= uses it to order suggestions.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smex)
+#+END_SRC
+
+=ivy= is a generic completion framework which uses the minibuffer. Turning on =ivy-mode= enables replacement of lots of built in =ido= functionality.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :diminish ivy-mode
+    :config
+    (ivy-mode t))
+#+END_SRC
+
+By default =ivy= starts filters with =^=. I don't normally want that and can easily type it manually when I do.
+
+#+BEGIN_SRC emacs-lisp
+  (setq ivy-initial-inputs-alist nil)
+#+END_SRC
+
+=counsel= is a collection of =ivy= enhanced versions of common Emacs commands. I haven't bound much as =ivy-mode= takes care of most things.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :bind (("M-x" . counsel-M-x)))
+#+END_SRC
+
+=swiper= is an =ivy= enhanced version of isearch.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package swiper
+    :bind (("M-s" . counsel-grep-or-swiper)))
+#+END_SRC
+
+=hydra= presents menus for =ivy= commands.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-hydra)
+#+END_SRC
+
+** Suggest next key
+
+Suggest next keys to me based on currently entered key combination.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :diminish which-key-mode
+    :config
+    (add-hook 'after-init-hook 'which-key-mode))
+#+END_SRC
+
+** Better undo
+
+=undo-tree= visualises undo history as a tree for easy navigation.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :defer 5
+    :diminish global-undo-tree-mode
+    :config
+    (global-undo-tree-mode 1))
+#+END_SRC
+
+* Appearance
+** Editor
+Set a color scheme
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dracula-theme
+    :ensure t
+    :config
+    (load-theme 'dracula t))
+#+END_SRC
+
+Set a nice font.
+
+#+BEGIN_SRC emacs-lisp
+  (set-frame-font "Hack 10" nil t)
+#+END_SRC
+
+Highlight the current line.
+
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode 1)
+#+END_SRC
+
+Show the lines numbers
+
+#+BEGIN_SRC emacs-lisp
+  (global-display-line-numbers-mode)
+#+END_SRC
+
+
+
+** Modeline
+
+Use smart mode line to replace the default ugly mode line
+
+#+BEGIN_SRC emacs-lisp
+(use-package minions
+  :config (minions-mode 1))
+
+(use-package moody
+  :config
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode))
+#+END_SRC
+
+* Coding
+
+Highlight parens etc. for improved readability.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters
+    :config
+    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+#+END_SRC
+
+Highlight strings which represent colours. I only want this in programming modes, and I don't want colour names to be highlighted (=x-colors=).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-mode
+    :config
+    (setq rainbow-x-colors nil)
+    (add-hook 'prog-mode-hook 'rainbow-mode))
+#+END_SRC
+
+
+** Project management
+
+Projectile handles folders which are in version control.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :config
+    (projectile-mode))
+#+END_SRC
+
+Tell projectile to integrate with =ivy= for completion.
+
+#+BEGIN_SRC emacs-lisp
+  (setq projectile-completion-system 'ivy)
+#+END_SRC
+
+Add some extra completion options via integration with =counsel=. In particular this enables =C-c p SPC= for smart buffer / file search, and =C-c p s s= for search via =ag=.
+
+There is no function for projectile-grep, but we could use =counsel-git-grep= which is similar. Should I bind that to =C-c p s g=?
+
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel-projectile
+    :config
+    (add-hook 'after-init-hook 'counsel-projectile-mode))
+#+END_SRC
+
+** Fuzzy search
+
+=fzf= is a fuzzy file finder which is very quick.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package fzf)
+#+END_SRC
+
+** Git
+
+Magit is an awesome interface to git. Summon it with `C-x g`.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :bind ("C-x g" . magit-status))
+#+END_SRC
+
+Display line changes in gutter based on git history. Enable it everywhere.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package git-gutter
+    :config
+    (global-git-gutter-mode 't)
+    :diminish git-gutter-mode)
+#+END_SRC
+
+TimeMachine lets us step through the history of a file as recorded in git.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package git-timemachine)
+#+END_SRC
+
+* Languages
+** Completion
+
+Add the company completion
+
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :diminish company-mode
+  :init
+  (setq company-minimum-prefix-length 2
+        company-selection-wrap-around t
+        company-tooltip-align-annotations t)
+  :config
+  (add-hook 'after-init-hook 'global-company-mode))
+#+END_SRC
+
+** LSP
+
+Add lsp-mode to support Language Servers
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :disabled t)
+
+  (use-package lsp-ui
+    :config
+    (setq lsp-ui-sideline-ignore-duplicate t)
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+  (use-package company-lsp
+    :after company lsp-mode
+    :init
+    (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
+    (push 'company-lsp company-backends))
+#+END_SRC
+
+** C
+
+C/C++ support thanks to cquery
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cquery
+    :init
+    (setq cquery-executable "d:/Code/merde/cquery/build/Release/bin/cquery.exe"))
+    :config
+    ;; Enable semantic highlighting
+    (setq cquery-sem-highlight-method 'font-lock)
+    ;; Enable diagnostics
+    (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t)))
+#+END_SRC
