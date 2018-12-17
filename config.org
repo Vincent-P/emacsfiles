@@ -1,51 +1,11 @@
 * Setup
-** Configure package sources
-
-Add repositories from which we'll load packages. I prefer to live on the bleeding edge so have only enabled melpa. Setting =package-enable-at-startup= to =nil= prevents a second package load and slightly improves startup time.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'package)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-  (setq package-enable-at-startup nil)
-  (package-initialize)
-  (package-refresh-contents)
-#+END_SRC
-
-** Bootstrap use-package
-
-If =use-package= is not installed, install it.
-
-#+BEGIN_SRC emacs-lisp
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
-#+END_SRC
-
-By default all packages should be installed from package manager as that's the usual path. This is equivalent to setting =:ensure t= on each call to =use-package=. To disable set =:ensure nil= (this is done automatically for any packages using =:load-path= so shouldn't generally be needed).
-
-#+BEGIN_SRC emacs-lisp
-  (setq use-package-always-ensure t)
-#+END_SRC
-
-** Benchmark startup
-
-=benchmark-init= records startup time by package so we can debug. It only records things after it's initialised, so put as early in config as possible.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package benchmark-init
-    :config
-    ;; To disable collection of benchmark data after init is done.
-    (add-hook 'after-init-hook 'benchmark-init/deactivate))
-
-  (add-hook 'after-init-hook
-            (lambda () (message "loaded in %s" (emacs-init-time))))
-#+END_SRC
-
 ** Increase garbage collector threshold
 
-The default garbage collection threshold is 800kB, increasing this to 10MB for startup increases speed (from 11.0s -> 9.7s when I tested).
+The default garbage collection threshold is 800kB, increasing this to 64MB to increase the startup speed.
+Do not forget to reset it to a reasonable value after.
 
 #+BEGIN_SRC emacs-lisp
-  (setq gc-cons-threshold 10000000)
+  (setq gc-cons-threshold 64000000)
 
   ;; Restore after startup
   (add-hook 'after-init-hook
@@ -55,15 +15,77 @@ The default garbage collection threshold is 800kB, increasing this to 10MB for s
                        gc-cons-threshold)))
 #+END_SRC
 
+** Load custom variables
+
+This makes emacs use the .custom file for its custom variable rather than modifying our init.el file.
+
+#+BEGIN_SRC emacs-lisp
+(setq custom-file (expand-file-name ".custom" user-emacs-directory))
+(if (file-exists-p custom-file)
+    (load custom-file))
+#+END_SRC
+
+** Configure package sources
+
+Add repositories from which we'll load packages. Setting =package-enable-at-startup= to =nil= prevents a second package load and slightly improves startup time.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+  (package-initialize)
+  (setq package-enable-at-startup nil)
+#+END_SRC
+
+** Bootstrap use-package
+
+Refresh package if it is needed.
+If =use-package= is not installed, install it.
+
+#+BEGIN_SRC emacs-lisp
+(unless package-archive-contents
+  (message "Refreshing package archives...")
+  (package-refresh-contents))
+
+(unless (package-installed-p 'use-package)
+  (message "`use-package' not found.  Installing...")
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-minimum-reported-time 0
+      use-package-verbose t)
+#+END_SRC
+
+By default all packages should be installed from package manager as that's the usual path. This is equivalent to setting =:ensure t= on each call to =use-package=. To disable set =:ensure nil= (this is done automatically for any packages using =:load-path= so shouldn't generally be needed).
+
+#+BEGIN_SRC emacs-lisp
+  (setq use-package-always-ensure t)
+#+END_SRC
+
+** Startup profiling
+
+Use esup to profile and optimize the startup time.
+
+#+BEGIN_SRC emacs-lisp
+(use-package esup
+  :ensure t
+  :defer t)
+#+END_SRC
+
 ** Make it easy to edit this file
 
 #+BEGIN_SRC emacs-lisp
-  (defun find-config ()
+  (defun edit-config ()
     "Edit config.org"
     (interactive)
     (find-file (expand-file-name "config.org" user-emacs-directory)))
 
-  (global-set-key (kbd "C-c I") 'find-config)
+  (defun reload-config ()
+    "Compile config.org and execute config.el"
+    (interactive)
+    (require 'org)
+    (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
+    (load-file (expand-file-name "config.org" user-emacs-directory)))
 #+END_SRC
 
 ** Performance trick
@@ -170,9 +192,7 @@ Evil-mode emulates Vim in Emacs.
 
   ;; gc operator, like vim-commentary
   (use-package evil-commentary
-    :after evil
-    :bind (:map evil-normal-state-map
-                ("gc" . evil-commentary)))
+    :after evil)
 
   ;; visual hints while editing
   (use-package evil-goggles
@@ -223,15 +243,13 @@ By default =ivy= starts filters with =^=. I don't normally want that and can eas
 =counsel= is a collection of =ivy= enhanced versions of common Emacs commands. I haven't bound much as =ivy-mode= takes care of most things.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package counsel
-    :bind (("M-x" . counsel-M-x)))
+  (use-package counsel)
 #+END_SRC
 
 =swiper= is an =ivy= enhanced version of isearch.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package swiper
-    :bind (("M-s" . counsel-grep-or-swiper)))
+  (use-package swiper)
 #+END_SRC
 
 =hydra= presents menus for =ivy= commands.
@@ -258,7 +276,7 @@ Suggest next keys to me based on currently entered key combination.
 
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
-    :defer 5
+    :defer t
     :diminish global-undo-tree-mode
     :config
     (global-undo-tree-mode 1))
@@ -371,13 +389,23 @@ There is no function for projectile-grep, but we could use =counsel-git-grep= wh
 #+END_SRC
 
 ** Git
+*** Magit
 
 Magit is an awesome interface to git. Summon it with `C-x g`.
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :bind ("C-x g" . magit-status))
+    :commands magit-status)
 #+END_SRC
+
+Use evil keybindings for magit.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-magit
+    :after magit)
+#+END_SRC
+
+*** Gutters
 
 Display line changes in gutter based on git history. Enable it everywhere.
 
@@ -392,8 +420,7 @@ Display line changes in gutter based on git history. Enable it everywhere.
     (set-face-background 'git-gutter:modified "yellow")
     (set-face-background 'git-gutter:added "green")
     (set-face-background 'git-gutter:deleted "red")
-    (global-git-gutter-mode 't)
-)
+    (global-git-gutter-mode 't))
 #+END_SRC
 
 TimeMachine lets us step through the history of a file as recorded in git.
@@ -450,7 +477,7 @@ C/C++ support thanks to cquery
 #+BEGIN_SRC emacs-lisp
   (use-package cquery
     :init
-    (setq cquery-executable "/usr/bin/cquery"))
+    (setq cquery-executable "d:/Code/merde/cquery/build/Release/bin/cquery.exe"))
     :config
     ;; Enable semantic highlighting
     (setq cquery-sem-highlight-method 'font-lock)
@@ -463,4 +490,49 @@ C formatting
 #+BEGIN_SRC emacs-lisp
 (setq c-default-style "bsd"
       c-basic-offset 4)
+#+END_SRC
+
+* Keybindings
+
+Here are all the bindings of this config.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package general
+    :config
+    ;; replace default emacs keybindings
+    (general-define-key
+    "C-s" 'counsel-grep-or-swiper   ; search for string in current buffer
+    "C-x C-f" 'counsel-find-file ; C-x C-f use counsel-find-file
+    "M-x" 'counsel-M-x              ; replace default M-x with ivy backend
+    )
+
+    ;; define our custom bindings
+    (general-define-key
+     :states '(normal visual insert emacs)
+     :prefix "SPC"
+     :non-normal-prefix "C-SPC"
+
+      ;; simple command
+      "/"   '(counsel-ag :which-key "find")
+      "TAB" '(switch-to-other-buffer :which-key "prev buffer")
+      "SPC" '(avy-goto-word-or-subword-1  :which-key "go to char")
+
+      ;; Config
+      "c" '(:ignore t :which-key "Config")
+      "ce"   '(edit-config :which-key "edit")
+      "cr"   '(reload-config :which-key "reload")
+
+      ;; Project
+      "p" '(:ignore t :which-key "Project")
+      "pp"   '(counsel-projectile-switch-project :which-key "switch project")
+      "pf"   '(counsel-projectile-find-file :which-key "find file")
+      "p/"   '(counsel-projectile-ag :which-key "find in project")
+
+      ;; Git
+      "g" '(:ignore t :which-key "Git")
+      "gs"   '(magit-status :which-key "status")
+
+      ;; Applications
+      "a" '(:ignore t :which-key "Applications")
+      "ad" 'dired))
 #+END_SRC

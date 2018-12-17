@@ -6,3 +6,4 @@ config.el
 projectile*
 recentf
 smex-items
+.custom
