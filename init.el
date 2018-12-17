@@ -6,9 +6,12 @@
  '(custom-safe-themes
    (quote
     ("f66ffeadda7b52d40c8d698967ae9e9836f54324445af95610d257fa5e3e1e21" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+ '(git-gutter:added-sign " ")
+ '(git-gutter:deleted-sign " ")
+ '(git-gutter:modified-sign " ")
  '(package-selected-packages
    (quote
-    (lsp-ui cquery company-lsp company moody minions git-timemachine git-gutter magit fzf counsel-projectile projectile rainbow-mode rainbow-delimiters which-key ivy-hydra counsel ivy smex evil-surround evil-goggles evil-commentary evil-collection evil-escape evil benchmark-init use-package))))
+    (flymake-diagnostic-at-point ivy-xref panda-theme lsp-ui cquery company-lsp company moody minions git-timemachine git-gutter magit fzf counsel-projectile projectile rainbow-mode rainbow-delimiters which-key ivy-hydra counsel ivy smex evil-surround evil-goggles evil-commentary evil-collection evil-escape evil benchmark-init use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

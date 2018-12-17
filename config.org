@@ -150,7 +150,7 @@ Evil-mode emulates Vim in Emacs.
     (setq evil-shift-round nil)
     (setq evil-want-C-u-scroll t)
     :config
-    (evil-mode))
+    (evil-mode 1))
 
   ;; remap Escape to something else to quit insert mode
   (use-package evil-escape
@@ -178,6 +178,7 @@ Evil-mode emulates Vim in Emacs.
   (use-package evil-goggles
     :after evil
     :config
+    (setq evil-goggles-duration 0.1)
     (evil-goggles-use-diff-faces)
     (evil-goggles-mode))
 
@@ -236,7 +237,8 @@ By default =ivy= starts filters with =^=. I don't normally want that and can eas
 =hydra= presents menus for =ivy= commands.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy-hydra)
+  (use-package ivy-hydra
+    :after ivy)
 #+END_SRC
 
 ** Suggest next key
@@ -270,7 +272,13 @@ Set a color scheme
   (use-package dracula-theme
     :ensure t
     :config
-    (load-theme 'dracula t))
+    (load-theme 'dracula t)
+    (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line          nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :underline  line)
+      (set-face-attribute 'mode-line          nil :box        nil)
+      (set-face-attribute 'mode-line-inactive nil :box        nil)))
 #+END_SRC
 
 Set a nice font.
@@ -303,11 +311,13 @@ Use smart mode line to replace the default ugly mode line
 
 (use-package moody
   :config
+  (setq x-underline-at-descent-line t)
   (moody-replace-mode-line-buffer-identification)
   (moody-replace-vc-mode))
 #+END_SRC
 
 * Coding
+** Parenthesis
 
 Highlight parens etc. for improved readability.
 
@@ -325,7 +335,6 @@ Highlight strings which represent colours. I only want this in programming modes
     (setq rainbow-x-colors nil)
     (add-hook 'prog-mode-hook 'rainbow-mode))
 #+END_SRC
-
 
 ** Project management
 
@@ -374,9 +383,17 @@ Display line changes in gutter based on git history. Enable it everywhere.
 
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
+    :diminish git-gutter-mode
+    :custom
+    (git-gutter:modified-sign " ") ;; two space
+    (git-gutter:added-sign " ")    ;; multiple character is OK
+    (git-gutter:deleted-sign " ")
     :config
+    (set-face-background 'git-gutter:modified "yellow")
+    (set-face-background 'git-gutter:added "green")
+    (set-face-background 'git-gutter:deleted "red")
     (global-git-gutter-mode 't)
-    :diminish git-gutter-mode)
+)
 #+END_SRC
 
 TimeMachine lets us step through the history of a file as recorded in git.
@@ -409,16 +426,21 @@ Add lsp-mode to support Language Servers
   (use-package lsp-mode
     :disabled t)
 
-  (use-package lsp-ui
-    :config
-    (setq lsp-ui-sideline-ignore-duplicate t)
-    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
-
   (use-package company-lsp
     :after company lsp-mode
     :init
     (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
     (push 'company-lsp company-backends))
+#+END_SRC
+
+** Find definitions/references
+
+Use ivy-xref to replace the standard xref to find definitions and references
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-xref
+  :ensure t
+  :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 #+END_SRC
 
 ** C
@@ -428,10 +450,17 @@ C/C++ support thanks to cquery
 #+BEGIN_SRC emacs-lisp
   (use-package cquery
     :init
-    (setq cquery-executable "d:/Code/merde/cquery/build/Release/bin/cquery.exe"))
+    (setq cquery-executable "/usr/bin/cquery"))
     :config
     ;; Enable semantic highlighting
     (setq cquery-sem-highlight-method 'font-lock)
     ;; Enable diagnostics
     (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t)))
+#+END_SRC
+
+C formatting
+
+#+BEGIN_SRC emacs-lisp
+(setq c-default-style "bsd"
+      c-basic-offset 4)
 #+END_SRC
