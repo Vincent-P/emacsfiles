@@ -402,7 +402,10 @@ Use evil keybindings for magit.
 
 #+BEGIN_SRC emacs-lisp
   (use-package evil-magit
-    :after magit)
+    :after magit
+    :init
+    (setq evil-magit-state 'normal
+          evil-magit-use-z-for-folds t))
 #+END_SRC
 
 *** Gutters
@@ -477,12 +480,14 @@ C/C++ support thanks to cquery
 #+BEGIN_SRC emacs-lisp
   (use-package cquery
     :init
-    (setq cquery-executable "d:/Code/merde/cquery/build/Release/bin/cquery.exe"))
+    (setq cquery-executable (if (string-equal system-type "gnu/linux")
+                              "/usr/bin/cquery"
+                              "d:/Code/merde/cquery/build/Release/bin/cquery.exe"))
     :config
     ;; Enable semantic highlighting
     (setq cquery-sem-highlight-method 'font-lock)
     ;; Enable diagnostics
-    (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t)))
+    (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))))
 #+END_SRC
 
 C formatting
@@ -525,6 +530,7 @@ Here are all the bindings of this config.
       ;; Project
       "p" '(:ignore t :which-key "Project")
       "pp"   '(counsel-projectile-switch-project :which-key "switch project")
+      "pb"   '(counsel-projectile-switch-to-buffer :which-key "switch buffer")
       "pf"   '(counsel-projectile-find-file :which-key "find file")
       "p/"   '(counsel-projectile-ag :which-key "find in project")
 
