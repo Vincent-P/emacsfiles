@@ -309,6 +309,7 @@ Highlight the current line.
 
 #+BEGIN_SRC emacs-lisp
   (global-hl-line-mode 1)
+
 #+END_SRC
 
 Show the lines numbers
@@ -324,14 +325,20 @@ Show the lines numbers
 Use smart mode line to replace the default ugly mode line
 
 #+BEGIN_SRC emacs-lisp
-(use-package minions
-  :config (minions-mode 1))
+  (use-package minions
+    :config (minions-mode 1))
 
-(use-package moody
-  :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode))
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+#+END_SRC
+
+Show the column number on the modeline
+
+#+BEGIN_SRC emacs-lisp
+  (column-number-mode 1)
 #+END_SRC
 
 * Coding
@@ -523,22 +530,23 @@ Here are all the bindings of this config.
       "SPC" '(avy-goto-word-or-subword-1  :which-key "go to char")
 
       ;; Config
-      "c" '(:ignore t :which-key "Config")
-      "ce"   '(edit-config :which-key "edit")
-      "cr"   '(reload-config :which-key "reload")
+      "c"   '(:ignore t :which-key "Config")
+      "ce"  '(edit-config :which-key "edit")
+      "cr"  '(reload-config :which-key "reload")
 
       ;; Project
-      "p" '(:ignore t :which-key "Project")
-      "pp"   '(counsel-projectile-switch-project :which-key "switch project")
-      "pb"   '(counsel-projectile-switch-to-buffer :which-key "switch buffer")
-      "pf"   '(counsel-projectile-find-file :which-key "find file")
-      "p/"   '(counsel-projectile-ag :which-key "find in project")
+      "p"   '(:ignore t :which-key "Project")
+      "pp"  '(counsel-projectile-switch-project :which-key "switch project")
+      "pb"  '(counsel-projectile-switch-to-buffer :which-key "switch buffer")
+      "pf"  '(counsel-projectile-find-file :which-key "find file")
+      "p/"  '(counsel-projectile-ag :which-key "find in project")
+      "p."   '(counsel-projectile-find-file-dwim :which-key "browse project")
 
       ;; Git
-      "g" '(:ignore t :which-key "Git")
-      "gs"   '(magit-status :which-key "status")
+      "g"   '(:ignore t :which-key "Git")
+      "gs"  '(magit-status :which-key "status")
 
       ;; Applications
-      "a" '(:ignore t :which-key "Applications")
-      "ad" 'dired))
+      "a"   '(:ignore t :which-key "Applications")
+      "ad"  'dired))
 #+END_SRC
