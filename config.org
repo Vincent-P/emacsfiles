@@ -1,3 +1,20 @@
+* Custom functions
+** Edit this config
+
+#+BEGIN_SRC emacs-lisp
+  (defun edit-config ()
+    "Edit config.org"
+    (interactive)
+    (find-file (expand-file-name "config.org" user-emacs-directory)))
+
+  (defun reload-config ()
+    "Compile config.org and execute config.el"
+    (interactive)
+    (require 'org)
+    (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
+    (byte-compile-file (expand-file-name "config.el" user-emacs-directory)))
+#+END_SRC
+
 * Setup
 ** Increase garbage collector threshold
 
@@ -72,22 +89,6 @@ Use esup to profile and optimize the startup time.
   :defer t)
 #+END_SRC
 
-** Make it easy to edit this file
-
-#+BEGIN_SRC emacs-lisp
-  (defun edit-config ()
-    "Edit config.org"
-    (interactive)
-    (find-file (expand-file-name "config.org" user-emacs-directory)))
-
-  (defun reload-config ()
-    "Compile config.org and execute config.el"
-    (interactive)
-    (require 'org)
-    (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
-    (load-file (expand-file-name "config.org" user-emacs-directory)))
-#+END_SRC
-
 ** Performance trick
 
 Garbage-collect on focus-out, Emacs should feel snappier.
@@ -153,6 +154,73 @@ I *never* want whitespace at the end of lines. Remove it on save.
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+
+Change the \*scratch\* buffer's to prog-mode, I dont like Lisp.
+
+#+BEGIN_SRC emacs-lisp
+  (setq initial-major-mode 'prog-mode)
+  (setq initial-scratch-message "Hi there!")
+
+#+END_SRC
+
+* Appearance
+** Editor
+Set a color scheme
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dracula-theme
+    :ensure t
+    :config
+    (load-theme 'dracula t)
+    (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line          nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :underline  line)
+      (set-face-attribute 'mode-line          nil :box        nil)
+      (set-face-attribute 'mode-line-inactive nil :box        nil)))
+#+END_SRC
+
+Set a nice font.
+
+#+BEGIN_SRC emacs-lisp
+  (set-frame-font "Hack 13" nil t)
+#+END_SRC
+
+Highlight the current line.
+
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode 1)
+
+#+END_SRC
+
+Show the lines numbers
+
+#+BEGIN_SRC emacs-lisp
+  (global-display-line-numbers-mode)
+#+END_SRC
+
+
+
+** Modeline
+
+Use smart mode line to replace the default ugly mode line
+
+#+BEGIN_SRC emacs-lisp
+  (use-package minions
+    :config (minions-mode 1))
+
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+#+END_SRC
+
+Show the column number on the modeline
+
+#+BEGIN_SRC emacs-lisp
+  (column-number-mode 1)
 #+END_SRC
 
 * Interface
@@ -282,65 +350,6 @@ Suggest next keys to me based on currently entered key combination.
     (global-undo-tree-mode 1))
 #+END_SRC
 
-* Appearance
-** Editor
-Set a color scheme
-
-#+BEGIN_SRC emacs-lisp
-  (use-package dracula-theme
-    :ensure t
-    :config
-    (load-theme 'dracula t)
-    (let ((line (face-attribute 'mode-line :underline)))
-      (set-face-attribute 'mode-line          nil :overline   line)
-      (set-face-attribute 'mode-line-inactive nil :overline   line)
-      (set-face-attribute 'mode-line-inactive nil :underline  line)
-      (set-face-attribute 'mode-line          nil :box        nil)
-      (set-face-attribute 'mode-line-inactive nil :box        nil)))
-#+END_SRC
-
-Set a nice font.
-
-#+BEGIN_SRC emacs-lisp
-  (set-frame-font "Hack 10" nil t)
-#+END_SRC
-
-Highlight the current line.
-
-#+BEGIN_SRC emacs-lisp
-  (global-hl-line-mode 1)
-
-#+END_SRC
-
-Show the lines numbers
-
-#+BEGIN_SRC emacs-lisp
-  (global-display-line-numbers-mode)
-#+END_SRC
-
-
-
-** Modeline
-
-Use smart mode line to replace the default ugly mode line
-
-#+BEGIN_SRC emacs-lisp
-  (use-package minions
-    :config (minions-mode 1))
-
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
-#+END_SRC
-
-Show the column number on the modeline
-
-#+BEGIN_SRC emacs-lisp
-  (column-number-mode 1)
-#+END_SRC
-
 * Coding
 ** Parenthesis
 
@@ -440,36 +449,6 @@ TimeMachine lets us step through the history of a file as recorded in git.
 #+END_SRC
 
 * Languages
-** Completion
-
-Add the company completion
-
-#+BEGIN_SRC emacs-lisp
-(use-package company
-  :diminish company-mode
-  :init
-  (setq company-minimum-prefix-length 2
-        company-selection-wrap-around t
-        company-tooltip-align-annotations t)
-  :config
-  (add-hook 'after-init-hook 'global-company-mode))
-#+END_SRC
-
-** LSP
-
-Add lsp-mode to support Language Servers
-
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :disabled t)
-
-  (use-package company-lsp
-    :after company lsp-mode
-    :init
-    (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
-    (push 'company-lsp company-backends))
-#+END_SRC
-
 ** Find definitions/references
 
 Use ivy-xref to replace the standard xref to find definitions and references
@@ -480,28 +459,18 @@ Use ivy-xref to replace the standard xref to find definitions and references
   :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 #+END_SRC
 
-** C
-
-C/C++ support thanks to cquery
+** Use eglot (lsp client)
 
 #+BEGIN_SRC emacs-lisp
-  (use-package cquery
-    :init
-    (setq cquery-executable (if (string-equal system-type "gnu/linux")
-                              "/usr/bin/cquery"
-                              "d:/Code/merde/cquery/build/Release/bin/cquery.exe"))
-    :config
-    ;; Enable semantic highlighting
-    (setq cquery-sem-highlight-method 'font-lock)
-    ;; Enable diagnostics
-    (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))))
+(use-package eglot
+  :ensure t)
 #+END_SRC
 
-C formatting
+** Rust major mode
 
 #+BEGIN_SRC emacs-lisp
-(setq c-default-style "bsd"
-      c-basic-offset 4)
+(use-package rust-mode
+  :ensure t)
 #+END_SRC
 
 * Keybindings
@@ -527,7 +496,7 @@ Here are all the bindings of this config.
       ;; simple command
       "/"   '(counsel-ag :which-key "find")
       "TAB" '(switch-to-other-buffer :which-key "prev buffer")
-      "SPC" '(avy-goto-word-or-subword-1  :which-key "go to char")
+      "SPC" 'counsel-M-x
 
       ;; Config
       "c"   '(:ignore t :which-key "Config")
