@@ -198,7 +198,7 @@ Highlight current buffer (only works with doom-themes).
 Set a nice font.
 
 #+BEGIN_SRC emacs-lisp
-  (set-frame-font "Hack 13" nil t)
+  (set-frame-font "IBM Plex Mono 13" nil t)
 #+END_SRC
 
 Highlight the current line.
@@ -222,9 +222,16 @@ Use smart mode line to replace the default ugly mode line
   (use-package minions
     :config (minions-mode 1))
 
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode))
+  (use-package all-the-icons)
+
+  (setq find-file-visit-truename t)
+
+  (use-package doom-modeline
+    :ensure t
+    :hook (after-init . doom-modeline-mode)
+    :config
+    (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
+    (setq doom-modeline-icon nil))
 #+END_SRC
 
 Show the column number on the modeline
@@ -239,7 +246,7 @@ Show the column number on the modeline
 Display the completion list in a popup.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package company-mode
+  (use-package company
     :config
     (add-hook 'after-init-hook 'global-company-mode))
 #+END_SRC
@@ -494,7 +501,9 @@ Use ivy-xref to replace the standard xref to find definitions and references
 
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
-    :ensure t)
+    :ensure t
+    :config
+    (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd")))
 #+END_SRC
 
 ** Rust major mode
@@ -502,6 +511,13 @@ Use ivy-xref to replace the standard xref to find definitions and references
 #+BEGIN_SRC emacs-lisp
   (use-package rust-mode
     :ensure t)
+#+END_SRC
+
+** C indentation
+
+#+BEGIN_SRC emacs-lisp
+  (setq c-default-style "bsd"
+        c-basic-offset 4)
 #+END_SRC
 
 * Keybindings
