@@ -37,9 +37,9 @@ Do not forget to reset it to a reasonable value after.
 This makes emacs use the .custom file for its custom variable rather than modifying our init.el file.
 
 #+BEGIN_SRC emacs-lisp
-(setq custom-file (expand-file-name ".custom" user-emacs-directory))
-(if (file-exists-p custom-file)
-    (load custom-file))
+  (setq custom-file (expand-file-name ".custom" user-emacs-directory))
+  (if (file-exists-p custom-file)
+      (load custom-file))
 #+END_SRC
 
 ** Configure package sources
@@ -60,17 +60,17 @@ Refresh package if it is needed.
 If =use-package= is not installed, install it.
 
 #+BEGIN_SRC emacs-lisp
-(unless package-archive-contents
-  (message "Refreshing package archives...")
-  (package-refresh-contents))
+  (unless package-archive-contents
+    (message "Refreshing package archives...")
+    (package-refresh-contents))
 
-(unless (package-installed-p 'use-package)
-  (message "`use-package' not found.  Installing...")
-  (package-install 'use-package))
+  (unless (package-installed-p 'use-package)
+    (message "`use-package' not found.  Installing...")
+    (package-install 'use-package))
 
-(require 'use-package)
-(setq use-package-minimum-reported-time 0
-      use-package-verbose t)
+  (require 'use-package)
+  (setq use-package-minimum-reported-time 0
+        use-package-verbose t)
 #+END_SRC
 
 By default all packages should be installed from package manager as that's the usual path. This is equivalent to setting =:ensure t= on each call to =use-package=. To disable set =:ensure nil= (this is done automatically for any packages using =:load-path= so shouldn't generally be needed).
@@ -84,9 +84,9 @@ By default all packages should be installed from package manager as that's the u
 Use esup to profile and optimize the startup time.
 
 #+BEGIN_SRC emacs-lisp
-(use-package esup
-  :ensure t
-  :defer t)
+  (use-package esup
+    :ensure t
+    :defer t)
 #+END_SRC
 
 ** Performance trick
@@ -94,7 +94,7 @@ Use esup to profile and optimize the startup time.
 Garbage-collect on focus-out, Emacs should feel snappier.
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'focus-out-hook #'garbage-collect)
+  (add-hook 'focus-out-hook #'garbage-collect)
 #+END_SRC
 
 * Preferences
@@ -168,31 +168,31 @@ Change the \*scratch\* buffer's to prog-mode, I dont like Lisp.
 Set a color scheme
 
 #+BEGIN_SRC emacs-lisp
-(use-package doom-themes
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (use-package doom-themes
+    :config
+    ;; Global settings (defaults)
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
-  ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
-  ;; may have their own settings.
-  (load-theme 'doom-dracula t)
+    ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+    ;; may have their own settings.
+    (load-theme 'doom-dracula t)
 
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
+    ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config)
 
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
+    ;; Corrects (and improves) org-mode's native fontification.
+    (doom-themes-org-config))
 #+END_SRC
 
 Highlight current buffer (only works with doom-themes).
 
-#+BEGIN_SRC
-(use-package solaire-mode
-  :hook ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
-  :config
-  (add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
-  (solaire-mode-swap-bg))
+#+BEGIN_SRC emacs-lisp
+  (use-package solaire-mode
+    :hook ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+    :config
+    (add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
+    (solaire-mode-swap-bg))
 #+END_SRC
 
 Set a nice font.
@@ -205,7 +205,6 @@ Highlight the current line.
 
 #+BEGIN_SRC emacs-lisp
   (global-hl-line-mode 1)
-
 #+END_SRC
 
 Show the lines numbers
@@ -235,15 +234,25 @@ Show the column number on the modeline
 #+END_SRC
 
 * Interface
+** Completion popup
+
+Display the completion list in a popup.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-mode
+    :config
+    (add-hook 'after-init-hook 'global-company-mode))
+#+END_SRC
+
 ** Error reporting
 
 Display flymake errors in a popup.
 
-#+BEGIN_SRC
-(use-package flymake-diagnostic-at-point
-  :after flymake
-  :config
-  (add-hook 'flymake-mode-hook #'flymake-diagnostic-at-point-mode))
+#+BEGIN_SRC emacs-lisp
+  (use-package flymake-diagnostic-at-point
+    :after flymake
+    :config
+    (add-hook 'flymake-mode-hook #'flymake-diagnostic-at-point-mode))
 #+END_SRC
 
 ** Evil mode
@@ -476,23 +485,23 @@ TimeMachine lets us step through the history of a file as recorded in git.
 Use ivy-xref to replace the standard xref to find definitions and references
 
 #+BEGIN_SRC emacs-lisp
-(use-package ivy-xref
-  :ensure t
-  :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
+  (use-package ivy-xref
+    :ensure t
+    :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 #+END_SRC
 
 ** Use eglot (lsp client)
 
 #+BEGIN_SRC emacs-lisp
-(use-package eglot
-  :ensure t)
+  (use-package eglot
+    :ensure t)
 #+END_SRC
 
 ** Rust major mode
 
 #+BEGIN_SRC emacs-lisp
-(use-package rust-mode
-  :ensure t)
+  (use-package rust-mode
+    :ensure t)
 #+END_SRC
 
 * Keybindings
@@ -504,10 +513,10 @@ Here are all the bindings of this config.
     :config
     ;; replace default emacs keybindings
     (general-define-key
-    "C-s" 'counsel-grep-or-swiper   ; search for string in current buffer
-    "C-x C-f" 'counsel-find-file ; C-x C-f use counsel-find-file
-    "M-x" 'counsel-M-x              ; replace default M-x with ivy backend
-    )
+     "C-s" 'counsel-grep-or-swiper ; search for string in current buffer
+     "C-x C-f" 'counsel-find-file  ; C-x C-f use counsel-find-file
+     "M-x" 'counsel-M-x           ; replace default M-x with ivy backend
+     )
 
     ;; define our custom bindings
     (general-define-key
@@ -515,29 +524,29 @@ Here are all the bindings of this config.
      :prefix "SPC"
      :non-normal-prefix "C-SPC"
 
-      ;; simple command
-      "/"   '(counsel-ag :which-key "find")
-      "TAB" '(switch-to-other-buffer :which-key "prev buffer")
-      "SPC" 'counsel-M-x
+     ;; simple command
+     "/"   '(counsel-ag :which-key "find")
+     "TAB" '(switch-to-other-buffer :which-key "prev buffer")
+     "SPC" 'counsel-M-x
 
-      ;; Config
-      "c"   '(:ignore t :which-key "Config")
-      "ce"  '(edit-config :which-key "edit")
-      "cr"  '(reload-config :which-key "reload")
+     ;; Config
+     "c"   '(:ignore t :which-key "Config")
+     "ce"  '(edit-config :which-key "edit")
+     "cr"  '(reload-config :which-key "reload")
 
-      ;; Project
-      "p"   '(:ignore t :which-key "Project")
-      "pp"  '(counsel-projectile-switch-project :which-key "switch project")
-      "pb"  '(counsel-projectile-switch-to-buffer :which-key "switch buffer")
-      "pf"  '(counsel-projectile-find-file :which-key "find file")
-      "p/"  '(counsel-projectile-ag :which-key "find in project")
-      "p."   '(counsel-projectile-find-file-dwim :which-key "browse project")
+     ;; Project
+     "p"   '(:ignore t :which-key "Project")
+     "pp"  '(counsel-projectile-switch-project :which-key "switch project")
+     "pb"  '(counsel-projectile-switch-to-buffer :which-key "switch buffer")
+     "pf"  '(counsel-projectile-find-file :which-key "find file")
+     "p/"  '(counsel-projectile-ag :which-key "find in project")
+     "p."   '(counsel-projectile-find-file-dwim :which-key "browse project")
 
-      ;; Git
-      "g"   '(:ignore t :which-key "Git")
-      "gs"  '(magit-status :which-key "status")
+     ;; Git
+     "g"   '(:ignore t :which-key "Git")
+     "gs"  '(magit-status :which-key "status")
 
-      ;; Applications
-      "a"   '(:ignore t :which-key "Applications")
-      "ad"  'dired))
+     ;; Applications
+     "a"   '(:ignore t :which-key "Applications")
+     "ad"  'dired))
 #+END_SRC
