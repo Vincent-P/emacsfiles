@@ -709,6 +709,7 @@
        "/"   '(counsel-ag :which-key "find")
        "TAB" '(switch-to-other-buffer :which-key "prev buffer")
        "SPC" 'counsel-M-x
+       "C-SPC" 'company-complete
 
        ;; Config
        "c"   '(:ignore t :which-key "Config")
@@ -722,6 +723,9 @@
        "pf"  '(counsel-projectile-find-file :which-key "find file")
        "p/"  '(counsel-projectile-ag :which-key "find in project")
        "p."  '(projectile-find-file-dwim :which-key "browse project")
+
+       ;; Buffer
+       "b"   'counsel-ibuffer
 
        ;; Git
        "g"   '(:ignore t :which-key "Git")
