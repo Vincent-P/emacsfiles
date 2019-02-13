@@ -272,14 +272,14 @@
    #+BEGIN_SRC emacs-lisp
   (use-package evil
     :init
-    (setq evil-want-integration t) ;; required by evil-collection
-    (setq evil-want-keybinding nil) ;; required by evil-collection
-    (setq evil-search-module 'evil-search)
-    (setq evil-ex-complete-emacs-commands nil)
-    (setq evil-vsplit-window-right t) ;; like vim's 'splitright'
-    (setq evil-split-window-below t) ;; like vim's 'splitbelow'
-    (setq evil-shift-round nil)
-    (setq evil-want-C-u-scroll t)
+    (setq-default evil-want-integration t) ;; required by evil-collection
+    (setq-default evil-want-keybinding nil) ;; required by evil-collection
+    (setq-default evil-search-module 'evil-search)
+    (setq-default evil-ex-complete-emacs-commands nil)
+    (setq-default evil-vsplit-window-right t) ;; like vim's 'splitright'
+    (setq-default evil-split-window-below t) ;; like vim's 'splitbelow'
+    (setq-default evil-shift-round nil)
+    (setq-default evil-want-C-u-scroll t)
     :config
     (evil-mode 1))
 
@@ -346,7 +346,7 @@
    By default =ivy= starts filters with =^=. I don't normally want that and can easily type it manually when I do.
 
    #+BEGIN_SRC emacs-lisp
-  (setq ivy-initial-inputs-alist nil)
+  (setq-default ivy-initial-inputs-alist nil)
    #+END_SRC
 
    =counsel= is a collection of =ivy= enhanced versions of common Emacs commands. I haven't bound much as =ivy-mode= takes care of most things.
@@ -412,7 +412,7 @@
    Hide formatting characters
 
    #+BEGIN_SRC emacs-lisp
-  (setq org-hide-emphasis-markers t)
+  (setq-default org-hide-emphasis-markers t)
    #+END_SRC
 
    Display list with a bullet point
