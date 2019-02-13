@@ -211,11 +211,12 @@
    Show the lines numbers
 
    #+BEGIN_SRC emacs-lisp
-     (setq display-line-numbers 'visual
-           display-line-numbers-current-absolute t
-           display-line-numbers-width 4
-           display-line-numbers-widen t)
-     (global-display-line-numbers-mode)
+     (setq-default display-line-numbers-type 'relative
+                   display-line-numbers-current-absolute t
+                   display-line-numbers-width 4
+                   display-line-numbers-widen t)
+     (add-hook 'text-mode-hook #'display-line-numbers-mode)
+     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
    #+END_SRC
 
 
