@@ -251,9 +251,20 @@
    Display the completion list in a popup.
 
    #+BEGIN_SRC emacs-lisp
-  (use-package company
-    :config
-    (add-hook 'after-init-hook 'global-company-mode))
+     (use-package company
+       :defer 2
+       :diminish
+       :custom
+       (company-begin-commands '(self-insert-command))
+       (company-idle-delay .1)
+       (company-minimum-prefix-length 2)
+       (company-show-numbers t)
+       (company-tooltip-align-annotations 't)
+       (global-company-mode t))
+     (use-package company-box
+       :after company
+       :diminish
+       :hook (company-mode . company-box-mode))
    #+END_SRC
 
 ** Error reporting
@@ -274,14 +285,14 @@
    #+BEGIN_SRC emacs-lisp
   (use-package evil
     :init
-    (setq-default evil-want-integration t) ;; required by evil-collection
-    (setq-default evil-want-keybinding nil) ;; required by evil-collection
-    (setq-default evil-search-module 'evil-search)
-    (setq-default evil-ex-complete-emacs-commands nil)
-    (setq-default evil-vsplit-window-right t) ;; like vim's 'splitright'
-    (setq-default evil-split-window-below t) ;; like vim's 'splitbelow'
-    (setq-default evil-shift-round nil)
-    (setq-default evil-want-C-u-scroll t)
+    (setq evil-want-integration t) ;; required by evil-collection
+    (setq evil-want-keybinding nil) ;; required by evil-collection
+    (setq evil-search-module 'evil-search)
+    (setq evil-ex-complete-emacs-commands nil)
+    (setq evil-vsplit-window-right t) ;; like vim's 'splitright'
+    (setq evil-split-window-below t) ;; like vim's 'splitbelow'
+    (setq evil-shift-round nil)
+    (setq evil-want-C-u-scroll t)
     :config
     (evil-mode 1))
 
