@@ -79,22 +79,18 @@
   (setq use-package-always-ensure t)
    #+END_SRC
 
-** Startup profiling
-
-   Use esup to profile and optimize the startup time.
-
-   #+BEGIN_SRC emacs-lisp
-  (use-package esup
-    :ensure t
-    :defer t)
-   #+END_SRC
-
 ** Performance trick
 
    Garbage-collect on focus-out, Emacs should feel snappier.
 
    #+BEGIN_SRC emacs-lisp
-  (add-hook 'focus-out-hook #'garbage-collect)
+     (add-hook 'focus-out-hook #'garbage-collect)
+   #+END_SRC
+
+   Fix some hangs in Windows
+
+   #+BEGIN_SRC emacs-lisp
+     (setq w32-get-true-file-attributes nil)
    #+END_SRC
 
 * Preferences
@@ -165,7 +161,8 @@
 
 * Appearance
 ** Editor
-   Set a color scheme
+
+   Set the color scheme, =doom-themes= provides nice themes that work well with =doom-modeline=.
 
    #+BEGIN_SRC emacs-lisp
      (use-package doom-themes
@@ -183,9 +180,9 @@
        )
    #+END_SRC
 
-   Use heaven-and-hell to toggle easily between dark and light themes.
+   Use =heaven-and-hell= to toggle easily between dark and light themes with F6.
 
-#+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
   (use-package heaven-and-hell
     :init
     (setq heaven-and-hell-theme-type 'dark) ;; Omit to use light by default
@@ -195,7 +192,7 @@
     :hook (after-init  . heaven-and-hell-init-hook)
     :bind (("C-c <f6>" . heaven-and-hell-load-default-theme)
            ("<f6>" . heaven-and-hell-toggle-theme)))
-#+END_SRC
+   #+END_SRC
 
    Set a nice font.
 
@@ -212,7 +209,7 @@
    Show the lines numbers
 
    #+BEGIN_SRC emacs-lisp
-     (setq-default display-line-numbers-type 'relative
+     (setq-default display-line-numbers-type t
                    display-line-numbers-current-absolute t
                    display-line-numbers-width 4
                    display-line-numbers-widen t)
@@ -223,21 +220,83 @@
 
 ** Modeline
 
-   Use smart mode line to replace the default ugly mode line
+   =doom-modeline= is a pretty and fast modeline.
 
    #+BEGIN_SRC emacs-lisp
-  (use-package minions
-    :config (minions-mode 1))
+     (use-package minions
+       :config (minions-mode 1))
 
-  (use-package all-the-icons)
+     (use-package all-the-icons)
 
-  (setq-default find-file-visit-truename t)
+     (setq-default find-file-visit-truename t)
 
-  (use-package doom-modeline
-    :ensure t
-    :hook (after-init . doom-modeline-mode)
-    :config
-    (setq doom-modeline-buffer-file-name-style 'truncate-with-project))
+     (use-package doom-modeline
+       :hook (after-init . doom-modeline-mode)
+       :config
+       ;; How tall the mode-line should be (only respected in GUI Emacs).
+       (setq doom-modeline-height 25)
+
+       ;; How wide the mode-line bar should be (only respected in GUI Emacs).
+       (setq doom-modeline-bar-width 3)
+
+       ;; Determines the style used by `doom-modeline-buffer-file-name'.
+       ;;
+       ;; Given ~/Projects/FOSS/emacs/lisp/comint.el
+       ;;   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+       ;;   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
+       ;;   truncate-with-project => emacs/l/comint.el
+       ;;   truncate-except-project => ~/P/F/emacs/l/comint.el
+       ;;   truncate-upto-root => ~/P/F/e/lisp/comint.el
+       ;;   truncate-all => ~/P/F/e/l/comint.el
+       ;;   relative-from-project => emacs/lisp/comint.el
+       ;;   relative-to-project => lisp/comint.el
+       ;;   file-name => comint.el
+       ;;   buffer-name => comint.el<2> (uniquify buffer name)
+       ;;
+       ;; If you are expereicing the laggy issue, especially while editing remote files
+       ;; with tramp, please try `file-name' style.
+       ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
+       (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
+
+       ;; What executable of Python will be used (if nil nothing will be showed).
+       (setq doom-modeline-python-executable "python")
+
+       ;; Whether show `all-the-icons' or not (if nil nothing will be showed).
+       (setq doom-modeline-icon t)
+
+       ;; Whether show the icon for major mode. It respects `doom-modeline-icon'.
+       (setq doom-modeline-major-mode-icon t)
+
+       ;; Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.
+       (setq doom-modeline-major-mode-color-icon t)
+
+       ;; Whether display minor modes or not. Non-nil to display in mode-line.
+       (setq doom-modeline-minor-modes t)
+
+       ;; If non-nil, a word count will be added to the selection-info modeline segment.
+       (setq doom-modeline-enable-word-count t)
+
+       ;; If non-nil, only display one number for checker information if applicable.
+       (setq doom-modeline-checker-simple-format t)
+
+       ;; Whether display perspective name or not. Non-nil to display in mode-line.
+       (setq doom-modeline-persp-name t)
+
+       ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
+       (setq doom-modeline-lsp t)
+
+       ;; Whether display github notifications or not. Requires `ghub` package.
+       (setq doom-modeline-github nil)
+
+       ;; The interval of checking github.
+       (setq doom-modeline-github-interval (* 30 60))
+
+       ;; Whether display environment version or not.
+       (setq doom-modeline-version nil)
+
+       ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
+       (setq doom-modeline-mu4e nil)
+       )
    #+END_SRC
 
    Show the column number on the modeline
@@ -465,9 +524,9 @@
 
    Use long lines
 
-#+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
   (add-hook 'org-mode-hook #'visual-line-mode)
-#+END_SRC
+   #+END_SRC
 
    Show some text in monospace fonts.
 
@@ -491,7 +550,7 @@
 
 ** Tree view
 
-#+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
   (use-package treemacs
     :defer t
     :init
@@ -564,7 +623,7 @@
 
   (use-package treemacs-magit
     :after treemacs magit)
-#+END_SRC
+   #+END_SRC
 * Coding
 ** Parenthesis
 
@@ -574,15 +633,6 @@
   (use-package rainbow-delimiters
     :config
     (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
-   #+END_SRC
-
-   Highlight strings which represent colours. I only want this in programming modes, and I don't want colour names to be highlighted (=x-colors=).
-
-   #+BEGIN_SRC emacs-lisp
-  (use-package rainbow-mode
-    :config
-    (setq rainbow-x-colors nil)
-    (add-hook 'prog-mode-hook 'rainbow-mode))
    #+END_SRC
 
 ** Project management
@@ -620,24 +670,23 @@
    #+END_SRC
 
 ** Git
-*** Magit
 
-    Magit is an awesome interface to git. Summon it with `C-x g`.
+   Magit is an awesome interface to git. Summon it with `C-x g`.
 
-    #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
   (use-package magit
     :commands magit-status)
-    #+END_SRC
+   #+END_SRC
 
-    Use evil keybindings for magit.
+   Use evil keybindings for magit.
 
-    #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
   (use-package evil-magit
     :after magit
     :init
     (setq evil-magit-state 'normal
           evil-magit-use-z-for-folds t))
-    #+END_SRC
+   #+END_SRC
 
 * Languages
 ** Find definitions/references
