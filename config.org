@@ -320,7 +320,9 @@
        (company-minimum-prefix-length 2)
        (company-show-numbers t)
        (company-tooltip-align-annotations 't)
+       (company-tng-configure-default)
        (global-company-mode t))
+
      (use-package company-box
        :after company
        :diminish
@@ -695,31 +697,76 @@
 
    #+BEGIN_SRC emacs-lisp
   (use-package ivy-xref
-    :ensure t
     :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
    #+END_SRC
 
-** Use eglot (lsp client)
+** Use lsp client
 
    #+BEGIN_SRC emacs-lisp
-  (use-package eglot
-    :ensure t
-    :config
-    (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd")))
+     (use-package lsp-mode
+       :hook (prog-mode . lsp))
+     (use-package lsp-ui)
+     (use-package company-lsp)
    #+END_SRC
 
 ** Rust major mode
 
    #+BEGIN_SRC emacs-lisp
-  (use-package rust-mode
-    :ensure t)
+  (use-package rust-mode)
    #+END_SRC
 
-** C indentation
+** C / C++ Configuration
+
+   Set the default formatting when formmating in emacs and indenting.
 
    #+BEGIN_SRC emacs-lisp
   (setq c-default-style "bsd"
         c-basic-offset 4)
+   #+END_SRC
+
+   Install a plugin for the language server =ccls=
+
+   #+BEGIN_SRC emacs-lisp
+  (use-package ccls
+    :after projectile
+    :custom
+    (ccls-args nil)
+    (ccls-executable (executable-find "ccls"))
+    (projectile-project-root-files-top-down-recurring
+     (append '("compile_commands.json" ".ccls")
+             projectile-project-root-files-top-down-recurring))
+    :config (push ".ccls-cache" projectile-globally-ignored-directories))
+   #+END_SRC
+
+   Install some plugins to use cmake
+
+   #+BEGIN_SRC emacs-lisp
+  (use-package cmake-mode
+    :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
+
+  (use-package cmake-font-lock
+    :after (cmake-mode)
+    :hook (cmake-mode . cmake-font-lock-activate))
+
+  (use-package cmake-ide
+    :after projectile
+    :hook (c++-mode . my/cmake-ide-find-project)
+    :preface
+    (defun my/cmake-ide-find-project ()
+      "Finds the directory of the project for cmake-ide."
+      (with-eval-after-load 'projectile
+        (setq cmake-ide-project-dir (projectile-project-root))
+        (setq cmake-ide-build-dir (concat cmake-ide-project-dir "build")))
+      (cmake-ide-load-db))
+
+    (defun my/switch-to-compilation-window ()
+      "Switches to the *compilation* buffer after compilation."
+      (other-window 1))
+    :bind ([remap comment-region] . cmake-ide-compile)
+    :init (cmake-ide-setup)
+    :config
+    (setq cmake-ide-cmake-args "-G Ninja")
+    (advice-add 'cmake-ide-compile :after #'my/switch-to-compilation-window))
    #+END_SRC
 
 * Keybindings
