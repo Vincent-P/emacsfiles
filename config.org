@@ -810,49 +810,52 @@ Install some plugins to use cmake
 Here are all the bindings of this config.
 
 #+BEGIN_SRC emacs-lisp
-    (use-package general
-      :config
-      ;; replace default emacs keybindings
-      (general-define-key
-       "C-s" 'counsel-grep-or-swiper ; search for string in current buffer
-       "C-x C-f" 'counsel-find-file  ; C-x C-f use counsel-find-file
-       "M-x" 'counsel-M-x           ; replace default M-x with ivy backend
-       )
+  (use-package general
+    :config
+    ;; replace default emacs keybindings
+    (general-define-key
+     "C-s" 'counsel-grep-or-swiper ; search for string in current buffer
+     "C-x C-f" 'counsel-find-file  ; C-x C-f use counsel-find-file
+     "M-x" 'counsel-M-x            ; replace default M-x with ivy backend
+     )
 
-      ;; define our custom bindings
-      (general-define-key
-       :states '(normal visual insert emacs)
-       :prefix "SPC"
-       :non-normal-prefix "C-SPC"
+    ;; define normal state keybindings
+    (general-define-key
+     :states '(normal visual emacs)
+     :prefix "SPC"
 
-       ;; simple command
-       "/"   '(counsel-ag :which-key "find")
-       "TAB" '(switch-to-other-buffer :which-key "prev buffer")
-       "SPC" 'counsel-M-x
-       "C-SPC" 'company-complete
+     ;; simple command
+     "/"   '(counsel-ag :which-key "find")
+     "TAB" '(switch-to-other-buffer :which-key "prev buffer")
+     "SPC" 'counsel-M-x
 
-       ;; Config
-       "c"   '(:ignore t :which-key "Config")
-       "ce"  '(edit-config :which-key "edit")
-       "cr"  '(reload-config :which-key "reload")
+     ;; Config
+     "c"   '(:ignore t :which-key "Config")
+     "ce"  '(edit-config :which-key "edit")
+     "cr"  '(reload-config :which-key "reload")
 
-       ;; Project
-       "p"   '(:ignore t :which-key "Project")
-       "pp"  '(counsel-projectile-switch-project :which-key "switch project")
-       "pb"  '(counsel-projectile-switch-to-buffer :which-key "switch buffer")
-       "pf"  '(counsel-projectile-find-file :which-key "find file")
-       "p/"  '(counsel-projectile-ag :which-key "find in project")
-       "p."  '(projectile-find-file-dwim :which-key "browse project")
+     ;; Project
+     "p"   '(:ignore t :which-key "Project")
+     "pp"  '(counsel-projectile-switch-project :which-key "switch project")
+     "pb"  '(counsel-projectile-switch-to-buffer :which-key "switch buffer")
+     "pf"  '(counsel-projectile-find-file :which-key "find file")
+     "p/"  '(counsel-projectile-ag :which-key "find in project")
+     "p."  '(projectile-find-file-dwim :which-key "browse project")
 
-       ;; Buffer
-       "b"   'counsel-ibuffer
+     ;; Buffer
+     "b"   'counsel-ibuffer
 
-       ;; Git
-       "g"   '(:ignore t :which-key "Git")
-       "gs"  '(magit-status :which-key "status")
+     ;; Git
+     "g"   '(:ignore t :which-key "Git")
+     "gs"  '(magit-status :which-key "status")
 
-       ;; Applications
-       "a"   '(:ignore t :which-key "Applications")
-       "ad"  'dired
-       "at"  'treemacs))
+     ;; Applications
+     "a"   '(:ignore t :which-key "Applications")
+     "ad"  'dired
+     "at"  'treemacs)
+
+
+    ;; define insert state key bindings
+    (general-define-key
+     "C-SPC"  'company-complete))
 #+END_SRC
