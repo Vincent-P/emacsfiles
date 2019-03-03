@@ -1,7 +1,7 @@
 * Custom functions
 ** Edit this config
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (defun edit-config ()
     "Edit config.org"
     (interactive)
@@ -13,15 +13,15 @@
     (require 'org)
     (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
     (byte-compile-file (expand-file-name "config.el" user-emacs-directory)))
-   #+END_SRC
+#+END_SRC
 
 * Setup
 ** Increase garbage collector threshold
 
-   The default garbage collection threshold is 800kB, increasing this to 64MB to increase the startup speed.
-   Do not forget to reset it to a reasonable value after.
+The default garbage collection threshold is 800kB, increasing this to 64MB to increase the startup speed.
+Do not forget to reset it to a reasonable value after.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq gc-cons-threshold 64000000)
 
   ;; Restore after startup
@@ -30,36 +30,36 @@
               (setq gc-cons-threshold 1000000)
               (message "gc-cons-threshold restored to %S"
                        gc-cons-threshold)))
-   #+END_SRC
+#+END_SRC
 
 ** Load custom variables
 
-   This makes emacs use the .custom file for its custom variable rather than modifying our init.el file.
+This makes emacs use the .custom file for its custom variable rather than modifying our init.el file.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq custom-file (expand-file-name ".custom" user-emacs-directory))
   (if (file-exists-p custom-file)
       (load custom-file))
-   #+END_SRC
+#+END_SRC
 
 ** Configure package sources
 
-   Add repositories from which we'll load packages. Setting =package-enable-at-startup= to =nil= prevents a second package load and slightly improves startup time.
+Add repositories from which we'll load packages. Setting =package-enable-at-startup= to =nil= prevents a second package load and slightly improves startup time.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (require 'package)
   (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
   (package-initialize)
   (setq package-enable-at-startup nil)
-   #+END_SRC
+#+END_SRC
 
 ** Bootstrap use-package
 
-   Refresh package if it is needed.
-   If =use-package= is not installed, install it.
+Refresh package if it is needed.
+If =use-package= is not installed, install it.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (unless package-archive-contents
     (message "Refreshing package archives...")
     (package-refresh-contents))
@@ -71,66 +71,66 @@
   (require 'use-package)
   (setq use-package-minimum-reported-time 0
         use-package-verbose t)
-   #+END_SRC
+#+END_SRC
 
-   By default all packages should be installed from package manager as that's the usual path. This is equivalent to setting =:ensure t= on each call to =use-package=. To disable set =:ensure nil= (this is done automatically for any packages using =:load-path= so shouldn't generally be needed).
+By default all packages should be installed from package manager as that's the usual path. This is equivalent to setting =:ensure t= on each call to =use-package=. To disable set =:ensure nil= (this is done automatically for any packages using =:load-path= so shouldn't generally be needed).
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq use-package-always-ensure t)
-   #+END_SRC
+#+END_SRC
 
 ** Performance trick
 
-   Garbage-collect on focus-out, Emacs should feel snappier.
+Garbage-collect on focus-out, Emacs should feel snappier.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (add-hook 'focus-out-hook #'garbage-collect)
-   #+END_SRC
+#+END_SRC
 
-   Fix some hangs in Windows
+Fix some hangs in Windows
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (setq w32-get-true-file-attributes nil)
-   #+END_SRC
+#+END_SRC
 
 * Preferences
 
-  Don't display the help screen on startup.
+Don't display the help screen on startup.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
-  #+END_SRC
+#+END_SRC
 
-  I prefer lines to wrap.
+I prefer lines to wrap.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (global-visual-line-mode 1)
-  #+END_SRC
+#+END_SRC
 
-  Let's turn off unwanted window decoration.
+Let's turn off unwanted window decoration.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (tooltip-mode    -1)
   (menu-bar-mode   -1)
-  #+END_SRC
+#+END_SRC
 
-  I don't want the error bell.
+I don't want the error bell.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq ring-bell-function 'ignore)
-  #+END_SRC
+#+END_SRC
 
-  Make the =yes or no= prompts shorter.
+Make the =yes or no= prompts shorter.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (defalias 'yes-or-no-p 'y-or-n-p)
-  #+END_SRC
+#+END_SRC
 
-  A common frustration with new Emacs users is the =filename#= files created. This centralises the backup files created as you edit.
+A common frustration with new Emacs users is the =filename#= files created. This centralises the backup files created as you edit.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
     backup-by-copying t    ; Don't delink hardlinks
     version-control t      ; Use version numbers on backups
@@ -138,28 +138,28 @@
     kept-new-versions 20   ; how many of the newest versions to keep
     kept-old-versions 5    ; and how many of the old
     )
-  #+END_SRC
+#+END_SRC
 
-  I usually don't want tabs, if I do I can set this buffer-local to =t=. If I just want one tab then use =C-q= (=quoted-insert=) to insert as a literal.
+I usually don't want tabs, if I do I can set this buffer-local to =t=. If I just want one tab then use =C-q= (=quoted-insert=) to insert as a literal.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq-default indent-tabs-mode nil)
-  #+END_SRC
+#+END_SRC
 
-  I *never* want whitespace at the end of lines. Remove it on save.
+I *never* want whitespace at the end of lines. Remove it on save.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
-  #+END_SRC
+#+END_SRC
 
-  Change the \*scratch\* buffer's to prog-mode, I dont like Lisp.
+Change the \*scratch\* buffer's to prog-mode, I dont like Lisp.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq-default initial-major-mode 'prog-mode)
   (setq-default initial-scratch-message "")
-  #+END_SRC
+#+END_SRC
 
-  Make the fringe less visible.
+Make the fringe less visible.
 
 #+BEGIN_SRC emacs-lisp
   (setq-default left-fringe-width 1)
@@ -169,9 +169,9 @@
 * Appearance
 ** Editor
 
-   Set the color scheme, =doom-themes= provides nice themes that work well with =doom-modeline=.
+Set the color scheme, =doom-themes= provides nice themes that work well with =doom-modeline=.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (use-package doom-themes
        :config
        ;; Global settings (defaults)
@@ -185,51 +185,51 @@
        ;; Corrects (and improves) org-mode's native fontification.
        ;; (doom-themes-org-config)
        )
-   #+END_SRC
+#+END_SRC
 
-   Use =heaven-and-hell= to toggle easily between dark and light themes with F6.
+Use =heaven-and-hell= to toggle easily between dark and light themes with F6.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package heaven-and-hell
     :init
-    (setq heaven-and-hell-theme-type 'light) ;; Omit to use light by default
+    (setq heaven-and-hell-theme-type 'dark) ;; Omit to use light by default
     (setq heaven-and-hell-themes
           '((dark  . doom-dracula) ;; Themes can be a list: (dark . (tsdh-dark wombat))
             (light . leuven)))
     :hook (after-init  . heaven-and-hell-init-hook)
     :bind (("C-c <f6>" . heaven-and-hell-load-default-theme)
            ("<f6>" . heaven-and-hell-toggle-theme)))
-   #+END_SRC
+#+END_SRC
 
-   Set a nice font.
+Set a nice font.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (set-frame-font "IBM Plex Mono 13" nil t)
-   #+END_SRC
+#+END_SRC
 
-   Highlight the current line.
+Highlight the current line.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (global-hl-line-mode 1)
-   #+END_SRC
+#+END_SRC
 
-   Show the lines numbers
+Show the lines numbers
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (setq-default display-line-numbers-type t
                    display-line-numbers-current-absolute t
                    display-line-numbers-width 4
                    display-line-numbers-widen t)
      (add-hook 'text-mode-hook #'display-line-numbers-mode)
      (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-   #+END_SRC
+#+END_SRC
 
 
 ** Modeline
 
-   =doom-modeline= is a pretty and fast modeline.
+=doom-modeline= is a pretty and fast modeline.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (use-package minions
        :config (minions-mode 1))
 
@@ -241,7 +241,7 @@
        :hook (after-init . doom-modeline-mode)
        :config
        ;; How tall the mode-line should be (only respected in GUI Emacs).
-       (setq doom-modeline-height 25)
+       (setq doom-modeline-height 35)
 
        ;; How wide the mode-line bar should be (only respected in GUI Emacs).
        (setq doom-modeline-bar-width 3)
@@ -304,20 +304,20 @@
        ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
        (setq doom-modeline-mu4e nil)
        )
-   #+END_SRC
+#+END_SRC
 
-   Show the column number on the modeline
+Show the column number on the modeline
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (column-number-mode 1)
-   #+END_SRC
+#+END_SRC
 
 * Interface
 ** Completion popup
 
-   Display the completion list in a popup.
+Display the completion list in a popup.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (use-package company
        :defer 2
        :diminish
@@ -334,24 +334,24 @@
        :after company
        :diminish
        :hook (company-mode . company-box-mode))
-   #+END_SRC
+#+END_SRC
 
 ** Error reporting
 
-   Display flymake errors in a popup.
+Display flymake errors in a popup.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package flymake-diagnostic-at-point
     :after flymake
     :config
     (add-hook 'flymake-mode-hook #'flymake-diagnostic-at-point-mode))
-   #+END_SRC
+#+END_SRC
 
 ** Evil mode
 
-   Evil-mode emulates Vim in Emacs.
+Evil-mode emulates Vim in Emacs.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package evil
     :init
     (setq evil-want-integration t) ;; required by evil-collection
@@ -406,76 +406,89 @@
     (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
     (evil-define-key 'visual global-map "S" 'evil-surround-region)
     (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
-   #+END_SRC
+#+END_SRC
 
 ** Command completion
 
-   =smart M-x= suggests =M-x= commands based on recency and frequency. I don't tend to use it directly but =counsel= uses it to order suggestions.
+=smart M-x= suggests =M-x= commands based on recency and frequency. I don't tend to use it directly but =counsel= uses it to order suggestions.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package smex)
-   #+END_SRC
+#+END_SRC
 
-   =ivy= is a generic completion framework which uses the minibuffer. Turning on =ivy-mode= enables replacement of lots of built in =ido= functionality.
+=ivy= is a generic completion framework which uses the minibuffer. Turning on =ivy-mode= enables replacement of lots of built in =ido= functionality.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package ivy
     :diminish ivy-mode
     :config
     (ivy-mode t))
-   #+END_SRC
 
-   By default =ivy= starts filters with =^=. I don't normally want that and can easily type it manually when I do.
+  (use-package all-the-icons-ivy
+    :after all-the-icons
+    :custom (all-the-icons-ivy-file-commands '(counsel-dired-jump
+                                               counsel-find-file
+                                               counsel-file-jump
+                                               counsel-find-library
+                                               counsel-git
+                                               counsel-projectile-find-dir
+                                               counsel-projectile-find-file
+                                               counsel-recentf))
+    :config
+    (all-the-icons-ivy-setup))
+#+END_SRC
 
-   #+BEGIN_SRC emacs-lisp
+By default =ivy= starts filters with =^=. I don't normally want that and can easily type it manually when I do.
+
+#+BEGIN_SRC emacs-lisp
   (setq-default ivy-initial-inputs-alist nil)
-   #+END_SRC
+#+END_SRC
 
-   =counsel= is a collection of =ivy= enhanced versions of common Emacs commands. I haven't bound much as =ivy-mode= takes care of most things.
+=counsel= is a collection of =ivy= enhanced versions of common Emacs commands. I haven't bound much as =ivy-mode= takes care of most things.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package counsel)
-   #+END_SRC
+#+END_SRC
 
-   =swiper= is an =ivy= enhanced version of isearch.
+=swiper= is an =ivy= enhanced version of isearch.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package swiper)
-   #+END_SRC
+#+END_SRC
 
-   =hydra= presents menus for =ivy= commands.
+=hydra= presents menus for =ivy= commands.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package ivy-hydra
     :after ivy)
-   #+END_SRC
+#+END_SRC
 
 ** Suggest next key
 
-   Suggest next keys to me based on currently entered key combination.
+Suggest next keys to me based on currently entered key combination.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package which-key
     :diminish which-key-mode
     :config
     (add-hook 'after-init-hook 'which-key-mode))
-   #+END_SRC
+#+END_SRC
 
 ** Better undo
 
-   =undo-tree= visualises undo history as a tree for easy navigation.
+=undo-tree= visualises undo history as a tree for easy navigation.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package undo-tree
     :defer t
     :diminish global-undo-tree-mode
     :config
     (global-undo-tree-mode 1))
-   #+END_SRC
+#+END_SRC
 
 ** Scrolling
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   ;;; Scrolling.
   ;; Good speed and allow scrolling through large images (pixel-scroll).
   ;; Note: Scroll lags when point must be moved but increasing the number
@@ -487,19 +500,19 @@
   (setq-default pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
   (setq-default mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
   (setq-default mouse-wheel-progressive-speed nil) ; Progressive speed is too fast for me.
-   #+END_SRC
+#+END_SRC
 
 ** Distraction free
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (use-package olivetti
        :config
        (setq olivetti-hide-mode-line t))
-   #+END_SRC
+#+END_SRC
 
 ** Org mode
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (use-package org
        :mode ("\\.org\\'" . org-mode)
        :custom
@@ -515,10 +528,19 @@
        (org-level-3 ((t (:weight normal :height 1.1 :background nil))))
        (org-image-actual-width '(600))
        :config
+       (setq org-startup-indented t
+             org-ellipsis " ⤵ " ;; folding symbol
+             org-pretty-entities t
+             org-hide-emphasis-markers t
+             ;; show actually italicized text instead of /italicized text/
+             org-agenda-block-separator ""
+             org-fontify-whole-heading-line t
+             org-fontify-done-headline t
+             org-fontify-quote-and-verse-blocks t)
        (add-to-list 'org-structure-template-alist '("el" "#+BEGIN_SRC emacs-lisp :tangle yes?\n\n#+END_SRC")))
-   #+END_SRC
+#+END_SRC
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (add-hook 'org-mode-hook
                '(lambda ()
                   (setq line-spacing 0.2) ;; Add more line padding for readability
@@ -538,33 +560,34 @@
                          'org-block-end-line
                          'org-meta-line
                          'org-document-info-keyword))))
-   #+END_SRC
+#+END_SRC
 
-   Hide formatting characters
+Hide formatting characters
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq-default org-hide-emphasis-markers t)
-   #+END_SRC
+#+END_SRC
 
-   Display list with a bullet point
+Display list with a bullet point
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (font-lock-add-keywords 'org-mode
                           '(("^ *\\([-]\\) "
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-   #+END_SRC
+#+END_SRC
 
-   Show bullet points for the header
+Show bullet points for the header
 
-   #+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-   #+END_SRC
+#+BEGIN_SRC emacs-lisp
+     (use-package org-bullets
+       :config
+       (setq org-bullets-bullet-list '(" ")) ;; no bullets, needs org-bullets package
+       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
 
 ** Tree view
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package treemacs
     :defer t
     :init
@@ -637,108 +660,109 @@
 
   (use-package treemacs-magit
     :after treemacs magit)
-   #+END_SRC
+#+END_SRC
+
 * Coding
 ** Parenthesis
 
-   Highlight parens etc. for improved readability.
+Highlight parens etc. for improved readability.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
     :config
     (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
-   #+END_SRC
+#+END_SRC
 
 ** Project management
 
-   Projectile handles folders which are in version control.
+Projectile handles folders which are in version control.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package projectile
     :config
     (projectile-mode))
-   #+END_SRC
+#+END_SRC
 
-   Tell projectile to integrate with =ivy= for completion.
+Tell projectile to integrate with =ivy= for completion.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq projectile-completion-system 'ivy)
-   #+END_SRC
+#+END_SRC
 
-   Add some extra completion options via integration with =counsel=. In particular this enables =C-c p SPC= for smart buffer / file search, and =C-c p s s= for search via =ag=.
+Add some extra completion options via integration with =counsel=. In particular this enables =C-c p SPC= for smart buffer / file search, and =C-c p s s= for search via =ag=.
 
-   There is no function for projectile-grep, but we could use =counsel-git-grep= which is similar. Should I bind that to =C-c p s g=?
+There is no function for projectile-grep, but we could use =counsel-git-grep= which is similar. Should I bind that to =C-c p s g=?
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package counsel-projectile
     :config
     (add-hook 'after-init-hook 'counsel-projectile-mode))
-   #+END_SRC
+#+END_SRC
 
 ** Fuzzy search
 
-   =fzf= is a fuzzy file finder which is very quick.
+=fzf= is a fuzzy file finder which is very quick.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package fzf)
-   #+END_SRC
+#+END_SRC
 
 ** Git
 
-   Magit is an awesome interface to git. Summon it with `C-x g`.
+Magit is an awesome interface to git. Summon it with `C-x g`.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package magit
     :commands magit-status)
-   #+END_SRC
+#+END_SRC
 
-   Use evil keybindings for magit.
+Use evil keybindings for magit.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package evil-magit
     :after magit
     :init
     (setq evil-magit-state 'normal
           evil-magit-use-z-for-folds t))
-   #+END_SRC
+#+END_SRC
 
 * Languages
 ** Find definitions/references
 
-   Use ivy-xref to replace the standard xref to find definitions and references
+Use ivy-xref to replace the standard xref to find definitions and references
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package ivy-xref
     :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
-   #+END_SRC
+#+END_SRC
 
 ** Use lsp client
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
      (use-package lsp-mode
        :hook (prog-mode . lsp))
      (use-package lsp-ui)
      (use-package company-lsp)
-   #+END_SRC
+#+END_SRC
 
 ** Rust major mode
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package rust-mode)
-   #+END_SRC
+#+END_SRC
 
 ** C / C++ Configuration
 
-   Set the default formatting when formmating in emacs and indenting.
+Set the default formatting when formmating in emacs and indenting.
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq c-default-style "bsd"
         c-basic-offset 4)
-   #+END_SRC
+#+END_SRC
 
-   Install a plugin for the language server =ccls=
+Install a plugin for the language server =ccls=
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package ccls
     :after projectile
     :custom
@@ -748,11 +772,11 @@
      (append '("compile_commands.json" ".ccls")
              projectile-project-root-files-top-down-recurring))
     :config (push ".ccls-cache" projectile-globally-ignored-directories))
-   #+END_SRC
+#+END_SRC
 
-   Install some plugins to use cmake
+Install some plugins to use cmake
 
-   #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package cmake-mode
     :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
 
@@ -779,13 +803,13 @@
     :config
     (setq cmake-ide-cmake-args "-G Ninja")
     (advice-add 'cmake-ide-compile :after #'my/switch-to-compilation-window))
-   #+END_SRC
+#+END_SRC
 
 * Keybindings
 
-  Here are all the bindings of this config.
+Here are all the bindings of this config.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
     (use-package general
       :config
       ;; replace default emacs keybindings
@@ -831,4 +855,4 @@
        "a"   '(:ignore t :which-key "Applications")
        "ad"  'dired
        "at"  'treemacs))
-  #+END_SRC
+#+END_SRC
