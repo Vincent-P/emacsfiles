@@ -195,7 +195,7 @@ Use =heaven-and-hell= to toggle easily between dark and light themes with F6.
     (setq heaven-and-hell-theme-type 'dark) ;; Omit to use light by default
     (setq heaven-and-hell-themes
           '((dark  . doom-dracula) ;; Themes can be a list: (dark . (tsdh-dark wombat))
-            (light . leuven)))
+            (light . doom-solarized-light)))
     :hook (after-init  . heaven-and-hell-init-hook)
     :bind (("C-c <f6>" . heaven-and-hell-load-default-theme)
            ("<f6>" . heaven-and-hell-toggle-theme)))
