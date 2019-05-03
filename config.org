@@ -518,7 +518,7 @@ Suggest next keys to me based on currently entered key combination.
        :custom
        (org-return-follows-link t)
        :custom-face
-       (variable-pitch ((t (:family "IBM Plex Serif"))))
+       (variable-pitch ((t (:family "ETBembo"))))
        (fixed-pitch ((t (:family "IBM Plex Mono"))))
        (org-document-title ((t (:weight bold :height 1.5))))
        (org-done ((t (:strike-through t :weight bold))))
@@ -841,6 +841,8 @@ Here are all the bindings of this config.
      "pf"  '(counsel-projectile-find-file :which-key "find file")
      "p/"  '(counsel-projectile-ag :which-key "find in project")
      "p."  '(projectile-find-file-dwim :which-key "browse project")
+     "p."  '(projectile-find-file-dwim :which-key "browse project")
+     "pc"  'projectile-compile-project
 
      ;; Buffer
      "b"   'counsel-ibuffer
