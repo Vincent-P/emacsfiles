@@ -329,18 +329,13 @@ Display the completion list in a popup.
        (company-tooltip-align-annotations 't)
        (company-tng-configure-default)
        (global-company-mode t))
-
-     (use-package company-box
-       :after company
-       :diminish
-       :hook (company-mode . company-box-mode))
 #+END_SRC
 
 ** Error reporting
 
 Display flymake errors in a popup.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC
   (use-package flymake-diagnostic-at-point
     :after flymake
     :config
@@ -739,10 +734,12 @@ Use ivy-xref to replace the standard xref to find definitions and references
 ** Use lsp client
 
 #+BEGIN_SRC emacs-lisp
-     (use-package lsp-mode
-       :hook (prog-mode . lsp))
-     (use-package lsp-ui)
-     (use-package company-lsp)
+  (use-package lsp-mode
+    :hook (prog-mode . lsp))
+  (use-package lsp-ui)
+  (use-package company-lsp)
+  (use-package flycheck
+    :init (global-flycheck-mode))
 #+END_SRC
 
 ** Rust major mode
@@ -783,26 +780,18 @@ Install some plugins to use cmake
   (use-package cmake-font-lock
     :after (cmake-mode)
     :hook (cmake-mode . cmake-font-lock-activate))
+#+END_SRC
 
-  (use-package cmake-ide
-    :after projectile
-    :hook (c++-mode . my/cmake-ide-find-project)
-    :preface
-    (defun my/cmake-ide-find-project ()
-      "Finds the directory of the project for cmake-ide."
-      (with-eval-after-load 'projectile
-        (setq cmake-ide-project-dir (projectile-project-root))
-        (setq cmake-ide-build-dir (concat cmake-ide-project-dir "build")))
-      (cmake-ide-load-db))
+** Python
 
-    (defun my/switch-to-compilation-window ()
-      "Switches to the *compilation* buffer after compilation."
-      (other-window 1))
-    :bind ([remap comment-region] . cmake-ide-compile)
-    :init (cmake-ide-setup)
-    :config
-    (setq cmake-ide-cmake-args "-G Ninja")
-    (advice-add 'cmake-ide-compile :after #'my/switch-to-compilation-window))
+Add support for =pyls=.
+
+
+#+BEGIN_SRC emacs-lisp
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection "pyls")
+                    :major-modes '(python-mode)
+                    :server-id 'pyls))
 #+END_SRC
 
 * Keybindings
