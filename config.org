@@ -742,6 +742,15 @@ Use ivy-xref to replace the standard xref to find definitions and references
     :init (global-flycheck-mode))
 #+END_SRC
 
+** Snippets
+
+Use a snippet plugin for the lsp servers.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet)
+  (use-package ivy-yasnippet)
+#+END_SRC
+
 ** Rust major mode
 
 #+BEGIN_SRC emacs-lisp
@@ -755,6 +764,19 @@ Set the default formatting when formmating in emacs and indenting.
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style "bsd"
         c-basic-offset 4)
+#+END_SRC
+
+Use clang-format to format code.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package clang-format)
+
+  (defun clang-format-buffer-smart ()
+    "Reformat buffer if .clang-format exists in the projectile root."
+    (when (f-exists? (expand-file-name ".clang-format" (projectile-project-root)))
+      (clang-format-buffer)))
+
+  (fset 'c-indent-region 'clang-format-region)
 #+END_SRC
 
 Install a plugin for the language server =ccls=
