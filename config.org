@@ -11,8 +11,7 @@
     "Compile config.org and execute config.el"
     (interactive)
     (require 'org)
-    (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
-    (byte-compile-file (expand-file-name "config.el" user-emacs-directory)))
+    (org-babel-load-file (expand-file-name "config.org" user-emacs-directory)))
 #+END_SRC
 
 * Setup
@@ -60,8 +59,7 @@ Refresh package if it is needed.
 If =use-package= is not installed, install it.
 
 #+BEGIN_SRC emacs-lisp
-  (unless package-archive-contents
-    (message "Refreshing package archives...")
+  (when (not package-archive-contents)
     (package-refresh-contents))
 
   (unless (package-installed-p 'use-package)
@@ -319,7 +317,6 @@ Display the completion list in a popup.
 
 #+BEGIN_SRC emacs-lisp
      (use-package company
-       :defer 2
        :diminish
        :custom
        (company-begin-commands '(self-insert-command))
@@ -333,13 +330,10 @@ Display the completion list in a popup.
 
 ** Error reporting
 
-Display flymake errors in a popup.
+Use flycheck to have better errors reports.
 
-#+BEGIN_SRC
-  (use-package flymake-diagnostic-at-point
-    :after flymake
-    :config
-    (add-hook 'flymake-mode-hook #'flymake-diagnostic-at-point-mode))
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck)
 #+END_SRC
 
 ** Evil mode
@@ -391,11 +385,6 @@ Evil-mode emulates Vim in Emacs.
   ;; like vim-surround
   (use-package evil-surround
     :after evil
-    :commands
-    (evil-surround-edit
-     evil-Surround-edit
-     evil-surround-region
-     evil-Surround-region)
     :init
     (evil-define-key 'operator global-map "s" 'evil-surround-edit)
     (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
@@ -475,7 +464,6 @@ Suggest next keys to me based on currently entered key combination.
 
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
-    :defer t
     :diminish global-undo-tree-mode
     :config
     (global-undo-tree-mode 1))
@@ -584,7 +572,6 @@ Show bullet points for the header
 
 #+BEGIN_SRC emacs-lisp
   (use-package treemacs
-    :defer t
     :init
     (with-eval-after-load 'winum
       (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
@@ -657,6 +644,16 @@ Show bullet points for the header
     :after treemacs magit)
 #+END_SRC
 
+** Windows configs
+
+Use =eyebrowse= to have windows configs (like workspaces in i3, or virtual desktops).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eyebrowse
+    :config
+    (eyebrowse-mode))
+#+END_SRC
+
 * Coding
 ** Parenthesis
 
@@ -707,8 +704,7 @@ There is no function for projectile-grep, but we could use =counsel-git-grep= wh
 Magit is an awesome interface to git. Summon it with `C-x g`.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :commands magit-status)
+  (use-package magit)
 #+END_SRC
 
 Use evil keybindings for magit.
@@ -735,11 +731,16 @@ Use ivy-xref to replace the standard xref to find definitions and references
 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-    :hook (prog-mode . lsp))
-  (use-package lsp-ui)
-  (use-package company-lsp)
-  (use-package flycheck
-    :init (global-flycheck-mode))
+    :hook (prog-mode . lsp)
+    :commands lsp
+    :init
+    (setq lsp-prefer-flymake nil))
+
+  (use-package lsp-ui :commands lsp-ui-mode)
+  (use-package company-lsp :commands company-lsp)
+  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  (use-package dap-mode)
+  ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 #+END_SRC
 
 ** Snippets
@@ -828,6 +829,15 @@ Here are all the bindings of this config.
      "C-s" 'counsel-grep-or-swiper ; search for string in current buffer
      "C-x C-f" 'counsel-find-file  ; C-x C-f use counsel-find-file
      "M-x" 'counsel-M-x            ; replace default M-x with ivy backend
+
+     ;; Window configs shortcuts
+     "M-q" 'eyebrowse-prev-window-config
+     "M-w" 'eyebrowse-next-window-config
+     "M-1" 'eyebrowse-switch-to-window-config-1
+     "M-2" 'eyebrowse-switch-to-window-config-2
+     "M-3" 'eyebrowse-switch-to-window-config-3
+     "M-4" 'eyebrowse-switch-to-window-config-4
+     "M-5" 'eyebrowse-switch-to-window-config-5
      )
 
     ;; define normal state keybindings

@@ -2,8 +2,10 @@ auto-save-list
 backup
 elpa
 .lsp*
-config.el
+config.el*
 projectile*
 recentf
 smex-items
 .custom
+.cache
+transient
