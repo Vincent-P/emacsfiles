@@ -409,16 +409,11 @@ Evil-mode emulates Vim in Emacs.
     (ivy-mode t))
 
   (use-package all-the-icons-ivy
-    :after all-the-icons
-    :custom (all-the-icons-ivy-file-commands '(counsel-dired-jump
-                                               counsel-find-file
-                                               counsel-file-jump
-                                               counsel-find-library
-                                               counsel-git
-                                               counsel-projectile-find-dir
-                                               counsel-projectile-find-file
-                                               counsel-recentf))
+    :after (all-the-icons ivy)
+    :custom (all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window))
     :config
+    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-dired-jump)
+    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-find-library)
     (all-the-icons-ivy-setup))
 #+END_SRC
 
@@ -807,14 +802,14 @@ Install some plugins to use cmake
 
 ** Python
 
-Add support for =pyls=.
+Use the excellent package =elpy= to provide a nice python integration.
 
 
 #+BEGIN_SRC emacs-lisp
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection "pyls")
-                    :major-modes '(python-mode)
-                    :server-id 'pyls))
+  (use-package elpy
+    :ensure t
+    :init
+    (elpy-enable))
 #+END_SRC
 
 * Keybindings
