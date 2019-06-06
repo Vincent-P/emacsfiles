@@ -858,10 +858,11 @@ Here are all the bindings of this config.
      "p/"  '(counsel-projectile-ag :which-key "find in project")
      "p."  '(projectile-find-file-dwim :which-key "browse project")
      "p."  '(projectile-find-file-dwim :which-key "browse project")
-     "pc"  'projectile-compile-project
+     "pc"  '(projectile-compile-project :which-key "compile")
+     "ps"  '(counsel-imenu :which-key "list symbols")
 
      ;; Buffer
-     "b"   'counsel-ibuffer
+     "b"   '(counsel-ibuffer :which-key "switch buffer")
 
      ;; Git
      "g"   '(:ignore t :which-key "Git")
