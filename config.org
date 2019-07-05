@@ -202,7 +202,13 @@ Use =heaven-and-hell= to toggle easily between dark and light themes with F6.
 Set a nice font.
 
 #+BEGIN_SRC emacs-lisp
-  (set-frame-font "IBM Plex Mono 13" nil t)
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8)
+  (set-face-attribute 'default nil :font "DejaVu Sans Mono 14")
+
+  (use-package emojify
+    :config
+    (add-hook 'after-init-hook #'global-emojify-mode))
 #+END_SRC
 
 Highlight the current line.
