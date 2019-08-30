@@ -1,6 +1,8 @@
 * Custom functions
 ** Edit this config
 
+These two functions allows to edit and reload the config directly in emacs.
+
 #+BEGIN_SRC emacs-lisp
   (defun edit-config ()
     "Edit config.org"
@@ -150,13 +152,6 @@ I *never* want whitespace at the end of lines. Remove it on save.
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
-Change the \*scratch\* buffer's to prog-mode, I dont like Lisp.
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default initial-major-mode 'prog-mode)
-  (setq-default initial-scratch-message "")
-#+END_SRC
-
 Make the fringe less visible.
 
 #+BEGIN_SRC emacs-lisp
@@ -170,19 +165,32 @@ Make the fringe less visible.
 Set the color scheme, =doom-themes= provides nice themes that work well with =doom-modeline=.
 
 #+BEGIN_SRC emacs-lisp
-     (use-package doom-themes
-       :config
-       ;; Global settings (defaults)
-       (setq-default doom-themes-enable-bold t    ; if nil, bold is universally disabled
-             doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (use-package doom-themes
+    :config
+    ;; Global settings (defaults)
+    (setq-default doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
-       ;; Enable flashing mode-line on errors
-       (doom-themes-visual-bell-config)
-       (doom-themes-treemacs-config)
+    ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config)
+    (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+    (doom-themes-treemacs-config)
 
-       ;; Corrects (and improves) org-mode's native fontification.
-       ;; (doom-themes-org-config)
-       )
+    ;; Corrects (and improves) org-mode's native fontification.
+    ;; (doom-themes-org-config)
+    )
+#+END_SRC
+
+=solaire-mode= is  a package compatible with =doom-themes= that highlights the current buffer and darken the others.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package solaire-mode
+    :hook
+    ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+    (minibuffer-setup . solaire-mode-in-minibuffer)
+    :config
+    (solaire-global-mode +1)
+    (solaire-mode-swap-bg))
 #+END_SRC
 
 Use =heaven-and-hell= to toggle easily between dark and light themes with F6.
@@ -204,11 +212,7 @@ Set a nice font.
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
-  (set-face-attribute 'default nil :font "DejaVu Sans Mono 14")
-
-  (use-package emojify
-    :config
-    (add-hook 'after-init-hook #'global-emojify-mode))
+  (set-face-attribute 'default nil :font "IBM Plex Mono 14")
 #+END_SRC
 
 Highlight the current line.
@@ -322,16 +326,32 @@ Show the column number on the modeline
 Display the completion list in a popup.
 
 #+BEGIN_SRC emacs-lisp
-     (use-package company
-       :diminish
-       :custom
-       (company-begin-commands '(self-insert-command))
-       (company-idle-delay .1)
-       (company-minimum-prefix-length 2)
-       (company-show-numbers t)
-       (company-tooltip-align-annotations 't)
-       (company-tng-configure-default)
-       (global-company-mode t))
+  (use-package company
+    :diminish
+    :custom
+    (company-idle-delay .1)
+    (company-minimum-prefix-length 2)
+
+    ; The current candidate isn't displayed inline except when there's only one left.
+    ; replace company-preview-if-just-one-frontend by company-preview-frontend to fix this
+    (company-frontends
+          '(company-pseudo-tooltip-unless-just-one-frontend
+            company-preview-frontend
+            company-echo-metadata-frontend))
+
+    ; cancel selections by typing non-matching characters
+    (company-require-match 'never)
+
+    (global-company-mode t)
+    :config
+    ; use tab to autocomplete
+    (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+    (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+
+    ; shift tab to go backwards
+    (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+    (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+    )
 #+END_SRC
 
 ** Error reporting
@@ -502,8 +522,8 @@ Suggest next keys to me based on currently entered key combination.
        :custom
        (org-return-follows-link t)
        :custom-face
-       (variable-pitch ((t (:family "ETBembo"))))
-       (fixed-pitch ((t (:family "IBM Plex Mono"))))
+       (variable-pitch ((t (:family "Noto Sans"))))
+       (fixed-pitch ((t (:family "Inconsolata"))))
        (org-document-title ((t (:weight bold :height 1.5))))
        (org-done ((t (:strike-through t :weight bold))))
        (org-headline-done ((t (:strike-through t))))
@@ -692,12 +712,10 @@ There is no function for projectile-grep, but we could use =counsel-git-grep= wh
     (add-hook 'after-init-hook 'counsel-projectile-mode))
 #+END_SRC
 
-** Fuzzy search
-
-=fzf= is a fuzzy file finder which is very quick.
+By default the compile command variable is not buffer-local, so it is impossible to set it in a dir- local file.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package fzf)
+(make-variable-buffer-local 'compile-command)
 #+END_SRC
 
 ** Git
@@ -728,22 +746,6 @@ Use ivy-xref to replace the standard xref to find definitions and references
     :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 #+END_SRC
 
-** Use lsp client
-
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :hook (prog-mode . lsp)
-    :commands lsp
-    :init
-    (setq lsp-prefer-flymake nil))
-
-  (use-package lsp-ui :commands lsp-ui-mode)
-  (use-package company-lsp :commands company-lsp)
-  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-  (use-package dap-mode)
-  ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-#+END_SRC
-
 ** Snippets
 
 Use a snippet plugin for the lsp servers.
@@ -768,19 +770,6 @@ Set the default formatting when formmating in emacs and indenting.
         c-basic-offset 4)
 #+END_SRC
 
-Use clang-format to format code.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package clang-format)
-
-  (defun clang-format-buffer-smart ()
-    "Reformat buffer if .clang-format exists in the projectile root."
-    (when (f-exists? (expand-file-name ".clang-format" (projectile-project-root)))
-      (clang-format-buffer)))
-
-  (fset 'c-indent-region 'clang-format-region)
-#+END_SRC
-
 Install a plugin for the language server =ccls=
 
 #+BEGIN_SRC emacs-lisp
@@ -799,11 +788,117 @@ Install some plugins to use cmake
 
 #+BEGIN_SRC emacs-lisp
   (use-package cmake-mode
-    :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
+    :after projectile
+    :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'")
+    :config
+    (projectile-register-project-type 'cmake-ninja '("CMakeLists.txt")
+                                      :compilation-dir "build"
+                                      :src-dir "src"
+                                      :compile "ninja"
+                                      :run "ninja run"
+                                      :configure "cd %s/build && cmake .."))
 
   (use-package cmake-font-lock
     :after (cmake-mode)
     :hook (cmake-mode . cmake-font-lock-activate))
+#+END_SRC
+
+In order to compile on Windows, some enviroment variables are needed to find the Visual Studio toolchain.
+It is hardcoded for Visual Studio 2019 Community.
+
+#+BEGIN_SRC emacs-lisp
+  (when (eq system-type 'windows-nt)
+    (setenv "PATH"
+            (concat
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\bin\\HostX64\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\VC\\VCPackages"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TeamFoundation\\Team Explorer"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\bin\\Roslyn"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Performance Tools\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Performance Tools"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Common\\VSPerfCollectionTools\\vs2019\\\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Common\\VSPerfCollectionTools\\vs2019\\"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.6.1 Tools\\x64\\"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.18362.0\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\\\MSBuild\\Current\\Bin"
+             path-separator
+             "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\"
+             path-separator
+             (getenv "PATH")))
+
+    (setenv "INCLUDE"
+            (concat
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\include"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6.1\\include\\um"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\ucrt"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\shared"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\um"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\winrt"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\cppwinrt"
+             path-separator))
+
+    (setenv "LIB"
+            (concat
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\lib\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6.1\\lib\\um\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.18362.0\\ucrt\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.18362.0\\um\\x64"
+             path-separator))
+
+    (setenv "LIBPATH"
+            (concat
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\lib\\x64"
+             path-separator
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\lib\\x86\\store\\references"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.18362.0"
+             path-separator
+             "C:\\Program Files (x86)\\Windows Kits\\10\\References\\10.0.18362.0"
+             path-separator
+             "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319")))
+#+END_SRC
+
+** GLSL Shader
+
+#+BEGIN_SRC emacs-lisp
+  (use-package glsl-mode
+    :mode "\\.\\(vert\\|frag\\)\\'")
+#+END_SRC
+
+** Maniascript Config
+
+Make a minimal major-mode for maniascript.
+
+#+BEGIN_SRC emacs-lisp
+  (define-derived-mode maniascript-mode prog-mode "maniascript"
+    (setq font-lock-defaults '(maniascript-highlights)))
 #+END_SRC
 
 ** Python
@@ -816,6 +911,32 @@ Use the excellent package =elpy= to provide a nice python integration.
     :ensure t
     :init
     (elpy-enable))
+#+END_SRC
+
+** Use lsp client
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :hook (prog-mode . lsp)
+    :commands lsp
+    :init
+    (setq lsp-prefer-flymake nil)
+    :config
+
+    (add-to-list 'lsp-language-id-configuration '(maniascript-mode . "maniascript"))
+
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-stdio-connection "manialsp.exe")
+                      :major-modes '(maniascript-mode)
+                      :server-id 'manialsp))
+    )
+
+  (use-package lsp-ui :commands lsp-ui-mode)
+  (use-package company-lsp :after company  :commands company-lsp)
+  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  (use-package dap-mode)
+
+  ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 #+END_SRC
 
 * Keybindings
@@ -848,7 +969,7 @@ Here are all the bindings of this config.
 
      ;; simple command
      "/"   '(counsel-ag :which-key "find")
-     "TAB" '(switch-to-other-buffer :which-key "prev buffer")
+     "TAB" '(evil-prev-buffer :which-key "prev buffer")
      "SPC" 'counsel-M-x
 
      ;; Config
@@ -865,7 +986,12 @@ Here are all the bindings of this config.
      "p."  '(projectile-find-file-dwim :which-key "browse project")
      "p."  '(projectile-find-file-dwim :which-key "browse project")
      "pc"  '(projectile-compile-project :which-key "compile")
-     "ps"  '(counsel-imenu :which-key "list symbols")
+     "pr"  '(projectile-run-project :which-key "run")
+
+     ;; LSP
+     "l"   '(:ignore t :which-key "LSP")
+     "ls"  '(counsel-imenu :which-key "list symbols")
+     "lr"  '(lsp-rename :which-key "rename")
 
      ;; Buffer
      "b"   '(counsel-ibuffer :which-key "switch buffer")
