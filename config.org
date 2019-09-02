@@ -457,7 +457,8 @@ By default =ivy= starts filters with =^=. I don't normally want that and can eas
     (setq ivy-count-format "(%d/%d) ")
     (setq ivy-initial-inputs-alist nil)
     (setq ivy-re-builders-alist
-          '((t . ivy--regex-fuzzy))))
+          '((counsel-ag . ivy--regex-plus)
+            (t . ivy--regex-fuzzy))))
 #+END_SRC
 
 =swiper= is an =ivy= enhanced version of isearch.
