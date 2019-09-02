@@ -420,12 +420,6 @@ Evil-mode emulates Vim in Emacs.
 
 ** Command completion
 
-=smart M-x= suggests =M-x= commands based on recency and frequency. I don't tend to use it directly but =counsel= uses it to order suggestions.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package smex)
-#+END_SRC
-
 =ivy= is a generic completion framework which uses the minibuffer. Turning on =ivy-mode= enables replacement of lots of built in =ido= functionality.
 
 #+BEGIN_SRC emacs-lisp
@@ -452,7 +446,18 @@ By default =ivy= starts filters with =^=. I don't normally want that and can eas
 =counsel= is a collection of =ivy= enhanced versions of common Emacs commands. I haven't bound much as =ivy-mode= takes care of most things.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package counsel)
+  (use-package counsel
+    :after ivy
+    :config
+    (use-package smex)
+    (use-package flx)
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
+    ;; intentional space before end of string
+    (setq ivy-count-format "(%d/%d) ")
+    (setq ivy-initial-inputs-alist nil)
+    (setq ivy-re-builders-alist
+          '((t . ivy--regex-fuzzy))))
 #+END_SRC
 
 =swiper= is an =ivy= enhanced version of isearch.
@@ -897,8 +902,56 @@ It is hardcoded for Visual Studio 2019 Community.
 Make a minimal major-mode for maniascript.
 
 #+BEGIN_SRC emacs-lisp
+  (setq maniascript-mode-syntax-table
+        (let ( (synTable (make-syntax-table c-mode-syntax-table)))
+          ;; syntax-table things
+          synTable))
+
+  (setq maniascript-font-lock-keywords
+        (let* (
+               ;; define several category of keywords
+               (x-keywords '("break" "case" "continue" "default" "else" "for" "foreach" "if" "return" "switchtype" "switch" "while"))
+               (x-declare '("declare" "metadata" "netread" "netwrite" "persistent" "as" "in"))
+               (x-types '("Void" "Integer" "Real" "Boolean" "Text" "Vec2" "Vec3" "Int3" "Ident"))
+               (x-constants '("NullId" "Null" "True" "False"))
+               (x-functions '("_" "log" "wait" "sleep" "assert" "count" "sortkeyreverse" "sortkey" "sort" "reverse" "removekey" "remove"  "addfirst" "add" "existskey" "exists" "keyof" "containsonly" "containsoneof" "slice" "tojson" "fromjson" "clear"))
+               (x-variables '("This"))
+
+               ;; generate regex string for each category of keywords
+               (x-keywords-regexp (regexp-opt x-keywords 'words))
+               (x-declare-regexp (regexp-opt x-declare 'words))
+               (x-types-regexp (regexp-opt x-types 'words))
+               (x-constants-regexp (regexp-opt x-constants 'words))
+               (x-functions-regexp (regexp-opt x-functions 'words))
+               (x-variables-regexp (regexp-opt x-variables 'words))
+
+               (x-directives-regexp "\\#\\(Include\\|Setting\\|RequireContext\\|Const\\|Struct\\|Extends\\)")
+               (x-multistring-regexp "\"\"\" \\.*?\"\"\"")
+               )
+
+          `(
+            (,x-keywords-regexp . font-lock-keyword-face)
+            (,x-declare-regexp . font-lock-keyword-face)
+            (,x-types-regexp . font-lock-type-face)
+            (,x-constants-regexp . font-lock-constant-face)
+            (,x-functions-regexp . font-lock-builtin-face)
+            (,x-variables-regexp . font-lock-variable-name-face)
+
+            (,x-directives-regexp . font-lock-preprocessor-face)
+            ;; note: order above matters, because once colored, that part won't change.
+            ;; in general, put longer words first
+            )))
+
   (define-derived-mode maniascript-mode prog-mode "maniascript"
-    (setq font-lock-defaults '(maniascript-highlights)))
+    (setq font-lock-defaults '((maniascript-font-lock-keywords)))
+
+    (setq-local comment-start "/*")
+    (setq-local comment-start-skip "/\\*+[ \t]*")
+    (setq-local comment-end "*/")
+    (setq-local comment-end-skip "[ \t]*\\*+/")
+    )
+
+  (add-to-list 'auto-mode-alist '("\\.Script.txt\\'" . maniascript-mode))
 #+END_SRC
 
 ** Python
