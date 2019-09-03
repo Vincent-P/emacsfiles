@@ -328,30 +328,32 @@ Display the completion list in a popup.
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :diminish
-    :custom
-    (company-idle-delay .1)
-    (company-minimum-prefix-length 2)
-
-    ; The current candidate isn't displayed inline except when there's only one left.
-    ; replace company-preview-if-just-one-frontend by company-preview-frontend to fix this
-    (company-frontends
-          '(company-pseudo-tooltip-unless-just-one-frontend
-            company-preview-frontend
-            company-echo-metadata-frontend))
-
-    ; cancel selections by typing non-matching characters
-    (company-require-match 'never)
-
-    (global-company-mode t)
     :config
-    ; use tab to autocomplete
+
+    (setq company-idle-delay .1)
+    (setq company-minimum-prefix-length 2)
+
+                                          ; The current candidate isn't displayed inline except when there's only one left.
+                                          ; replace company-preview-if-just-one-frontend by company-preview-frontend to fix this
+    (setq company-frontends
+     '(company-pseudo-tooltip-unless-just-one-frontend
+       company-preview-frontend
+       company-echo-metadata-frontend))
+
+                                          ; cancel selections by typing non-matching characters
+    (setq company-require-match 'never)
+
+    (setq global-company-mode t)
+                                          ; use tab to autocomplete
     (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
     (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
 
-    ; shift tab to go backwards
+                                          ; shift tab to go backwards
     (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-    (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
-    )
+    (define-key company-active-map (kbd "<backtab>") 'company-select-previous))
+
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 #+END_SRC
 
 ** Error reporting
@@ -499,17 +501,14 @@ Suggest next keys to me based on currently entered key combination.
 ** Scrolling
 
 #+BEGIN_SRC emacs-lisp
-  ;;; Scrolling.
-  ;; Good speed and allow scrolling through large images (pixel-scroll).
-  ;; Note: Scroll lags when point must be moved but increasing the number
-  ;;       of lines that point moves in pixel-scroll.el ruins large image
-  ;;       scrolling. So unfortunately I think we'll just have to live with
-  ;;       this.
-  (pixel-scroll-mode)
-  (setq-default pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
-  (setq-default pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
-  (setq-default mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
-  (setq-default mouse-wheel-progressive-speed nil) ; Progressive speed is too fast for me.
+  ;; Mouse & Smooth Scroll
+  ;; Scroll one line at a time (less "jumpy" than defaults)
+  (when (display-graphic-p)
+    (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
+          mouse-wheel-progressive-speed nil))
+  (setq scroll-step 1
+        scroll-margin 0
+        scroll-conservatively 100000)
 #+END_SRC
 
 ** Distraction free
@@ -1016,6 +1015,13 @@ Here are all the bindings of this config.
      "M-5" 'eyebrowse-switch-to-window-config-5
      )
 
+    (general-define-key
+     :states '(normal visual emacs)
+     ;; LSP
+     "gr"  '(lsp-find-references :which-key "find references")
+     "gd"  '(lsp-find-definition :which-key "find definition")
+     )
+
     ;; define normal state keybindings
     (general-define-key
      :states '(normal visual emacs)
@@ -1045,7 +1051,7 @@ Here are all the bindings of this config.
      ;; LSP
      "l"   '(:ignore t :which-key "LSP")
      "ls"  '(counsel-imenu :which-key "list symbols")
-     "lr"  '(lsp-rename :which-key "rename")
+     "ln"  '(lsp-rename :which-key "rename symbol")
 
      ;; Buffer
      "b"   '(counsel-ibuffer :which-key "switch buffer")
