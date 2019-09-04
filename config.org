@@ -786,7 +786,13 @@ Install a plugin for the language server =ccls=
     (projectile-project-root-files-top-down-recurring
      (append '("compile_commands.json" ".ccls")
              projectile-project-root-files-top-down-recurring))
-    :config (push ".ccls-cache" projectile-globally-ignored-directories))
+    :config (push ".ccls-cache" projectile-globally-ignored-directories)
+    (setq ccls-sem-highlight-method 'font-lock)
+
+
+    ;; For rainbow semantic highlighting
+    ;; (ccls-use-default-rainbow-sem-highlight)
+    )
 #+END_SRC
 
 Install some plugins to use cmake
@@ -985,7 +991,9 @@ Use the excellent package =elpy= to provide a nice python integration.
     )
 
   (use-package lsp-ui :commands lsp-ui-mode)
-  (use-package company-lsp :after company  :commands company-lsp)
+  (use-package company-lsp :after company  :commands company-lsp
+    :config
+    (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
   (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
   (use-package dap-mode)
 
