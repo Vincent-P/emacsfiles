@@ -171,8 +171,6 @@ Set the color scheme, =doom-themes= provides nice themes that work well with =do
     (setq-default doom-themes-enable-bold t    ; if nil, bold is universally disabled
           doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
-    ;; Enable flashing mode-line on errors
-    (doom-themes-visual-bell-config)
     (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
     (doom-themes-treemacs-config)
 
@@ -212,7 +210,9 @@ Set a nice font.
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
-  (set-face-attribute 'default nil :font "IBM Plex Mono 14")
+  (set-face-attribute 'default nil :family "IBM Plex Mono" :height 140)
+  (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 140)
+  (set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 130)
 #+END_SRC
 
 Highlight the current line.
@@ -527,8 +527,6 @@ Suggest next keys to me based on currently entered key combination.
        :custom
        (org-return-follows-link t)
        :custom-face
-       (variable-pitch ((t (:family "Noto Sans"))))
-       (fixed-pitch ((t (:family "Inconsolata"))))
        (org-document-title ((t (:weight bold :height 1.5))))
        (org-done ((t (:strike-through t :weight bold))))
        (org-headline-done ((t (:strike-through t))))
