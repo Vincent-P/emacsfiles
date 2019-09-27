@@ -70,7 +70,8 @@ If =use-package= is not installed, install it.
 
   (require 'use-package)
   (setq use-package-minimum-reported-time 0
-        use-package-verbose t)
+        use-package-verbose t
+        use-package-compute-statistics t)
 #+END_SRC
 
 By default all packages should be installed from package manager as that's the usual path. This is equivalent to setting =:ensure t= on each call to =use-package=. To disable set =:ensure nil= (this is done automatically for any packages using =:load-path= so shouldn't generally be needed).
@@ -166,6 +167,7 @@ Set the color scheme, =doom-themes= provides nice themes that work well with =do
 
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
+    :custom (custom-enabled-themes '(doom-dracula))
     :config
     ;; Global settings (defaults)
     (setq-default doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -191,28 +193,18 @@ Set the color scheme, =doom-themes= provides nice themes that work well with =do
     (solaire-mode-swap-bg))
 #+END_SRC
 
-Use =heaven-and-hell= to toggle easily between dark and light themes with F6.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package heaven-and-hell
-    :init
-    (setq heaven-and-hell-theme-type 'dark) ;; Omit to use light by default
-    (setq heaven-and-hell-themes
-          '((dark  . doom-dracula) ;; Themes can be a list: (dark . (tsdh-dark wombat))
-            (light . doom-solarized-light)))
-    :hook (after-init  . heaven-and-hell-init-hook)
-    :bind (("C-c <f6>" . heaven-and-hell-load-default-theme)
-           ("<f6>" . heaven-and-hell-toggle-theme)))
-#+END_SRC
-
 Set a nice font.
 
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
-  (set-face-attribute 'default nil :family "IBM Plex Mono" :height 140)
-  (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 140)
+
+  (set-face-attribute 'default nil :family "Cascadia Code" :height 120)
+  (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 120)
+
   (set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 130)
+  (set-face-attribute 'mode-line nil :family "Segoe UI" :height 130)
+  (set-face-attribute 'mode-line-inactive nil :family "Segoe UI" :height 130)
 #+END_SRC
 
 Highlight the current line.
@@ -333,27 +325,24 @@ Display the completion list in a popup.
     (setq company-idle-delay .1)
     (setq company-minimum-prefix-length 2)
 
-                                          ; The current candidate isn't displayed inline except when there's only one left.
-                                          ; replace company-preview-if-just-one-frontend by company-preview-frontend to fix this
+  ; The current candidate isn't displayed inline except when there's only one left.
+  ; replace company-preview-if-just-one-frontend by company-preview-frontend to fix this
     (setq company-frontends
      '(company-pseudo-tooltip-unless-just-one-frontend
        company-preview-frontend
        company-echo-metadata-frontend))
 
-                                          ; cancel selections by typing non-matching characters
+  ; cancel selections by typing non-matching characters
     (setq company-require-match 'never)
 
     (setq global-company-mode t)
-                                          ; use tab to autocomplete
+  ; use tab to autocomplete
     (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
     (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
 
-                                          ; shift tab to go backwards
+  ; shift tab to go backwards
     (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
     (define-key company-active-map (kbd "<backtab>") 'company-select-previous))
-
-  (use-package company-box
-    :hook (company-mode . company-box-mode))
 #+END_SRC
 
 ** Error reporting
@@ -362,6 +351,17 @@ Use flycheck to have better errors reports.
 
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck)
+#+END_SRC
+
+** Better undo
+
+=undo-tree= visualises undo history as a tree for easy navigation.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :diminish global-undo-tree-mode
+    :config
+    (global-undo-tree-mode 1))
 #+END_SRC
 
 ** Evil mode
@@ -485,17 +485,6 @@ Suggest next keys to me based on currently entered key combination.
     :diminish which-key-mode
     :config
     (add-hook 'after-init-hook 'which-key-mode))
-#+END_SRC
-
-** Better undo
-
-=undo-tree= visualises undo history as a tree for easy navigation.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package undo-tree
-    :diminish global-undo-tree-mode
-    :config
-    (global-undo-tree-mode 1))
 #+END_SRC
 
 ** Scrolling
@@ -975,7 +964,6 @@ Use the excellent package =elpy= to provide a nice python integration.
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
     :hook (prog-mode . lsp)
-    :commands lsp
     :init
     (setq lsp-prefer-flymake nil)
     :config
@@ -988,11 +976,11 @@ Use the excellent package =elpy= to provide a nice python integration.
                       :server-id 'manialsp))
     )
 
-  (use-package lsp-ui :commands lsp-ui-mode)
-  (use-package company-lsp :after company  :commands company-lsp
+  (use-package lsp-ui)
+  (use-package company-lsp :after company  company-lsp
     :config
     (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
-  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  (use-package lsp-treemacs)
   (use-package dap-mode)
 
   ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
