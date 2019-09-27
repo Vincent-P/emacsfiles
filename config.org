@@ -395,7 +395,10 @@ Evil-mode emulates Vim in Emacs.
   ;; vim-like keybindings everywhere in emacs
   (use-package evil-collection
     :after evil
-    :config
+    :custom
+    (evil-collection-company-use-tng nil)
+    (evil-collection-setup-minibuffer t)
+    :init
     (evil-collection-init))
 
   ;; gc operator, like vim-commentary
@@ -1041,6 +1044,9 @@ Here are all the bindings of this config.
      "p."  '(projectile-find-file-dwim :which-key "browse project")
      "pc"  '(projectile-compile-project :which-key "compile")
      "pr"  '(projectile-run-project :which-key "run")
+
+     ;; Files
+     "f"   'find-file
 
      ;; LSP
      "l"   '(:ignore t :which-key "LSP")
