@@ -210,9 +210,11 @@ Set a nice font.
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
-  (set-face-attribute 'default nil :family "IBM Plex Mono" :height 140)
-  (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 140)
-  (set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 130)
+  (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
+  (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
+  (set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 120)
+  (set-face-attribute 'mode-line nil :family "Segoe UI" :height 120)
+  (set-face-attribute 'mode-line-inactive nil :family "Segoe UI" :height 120)
 #+END_SRC
 
 Highlight the current line.
@@ -773,6 +775,15 @@ Set the default formatting when formmating in emacs and indenting.
         c-basic-offset 4)
 #+END_SRC
 
+Use tabs
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c++-mode-hook
+            '(lambda ()
+               (setq indent-tabs-mode t)
+               ))
+#+END_SRC
+
 Install a plugin for the language server =ccls=
 
 #+BEGIN_SRC emacs-lisp
@@ -894,7 +905,7 @@ It is hardcoded for Visual Studio 2019 Community.
              "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319")))
 #+END_SRC
 
-** GLSL Shader
+** Shaders
 
 #+BEGIN_SRC emacs-lisp
   (use-package glsl-mode
