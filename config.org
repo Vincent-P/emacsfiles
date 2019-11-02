@@ -61,8 +61,7 @@ Refresh package if it is needed.
 If =use-package= is not installed, install it.
 
 #+BEGIN_SRC emacs-lisp
-  (when (not package-archive-contents)
-    (package-refresh-contents))
+  (package-refresh-contents)
 
   (unless (package-installed-p 'use-package)
     (message "`use-package' not found.  Installing...")
@@ -396,7 +395,6 @@ Evil-mode emulates Vim in Emacs.
     :after evil
     :custom
     (evil-collection-company-use-tng nil)
-    (evil-collection-setup-minibuffer t)
     :init
     (evil-collection-init))
 
@@ -445,6 +443,24 @@ By default =ivy= starts filters with =^=. I don't normally want that and can eas
 
 #+BEGIN_SRC emacs-lisp
   (setq-default ivy-initial-inputs-alist nil)
+#+END_SRC
+
+Move the ivy frame to a postframe (popup window).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-posframe
+    :config
+    ;; display at `ivy-posframe-style'
+    ;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display)))
+    (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+    ;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
+    ;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-bottom-left)))
+    ;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-bottom-left)))
+    ;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
+    (setq ivy-posframe-parameters
+          '((left-fringe . 8)
+            (right-fringe . 8)))
+    (ivy-posframe-mode 1))
 #+END_SRC
 
 =counsel= is a collection of =ivy= enhanced versions of common Emacs commands. I haven't bound much as =ivy-mode= takes care of most things.
@@ -1054,7 +1070,9 @@ Here are all the bindings of this config.
      "pr"  '(projectile-run-project :which-key "run")
 
      ;; Files
-     "f"   'find-file
+     "f"   '(:ignore t :which-key "Files")
+     "ff"  '(counsel-find-file :which-key "Find file")
+     "fo"  '(projectile-find-other-file :which-key "Find other file")
 
      ;; LSP
      "l"   '(:ignore t :which-key "LSP")
