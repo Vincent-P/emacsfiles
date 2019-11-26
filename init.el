@@ -5,8 +5,8 @@
 	  (config-org (expand-file-name "config.org" user-emacs-directory)))
 
   ;; If config is pre-compiled, then load that
-  (if (file-exists-p config-regular)
-      (load-file config-regular)
+  (if (file-exists-p config-compiled)
+      (load-file config-compiled)
     ;; Otherwise use org-babel to tangle and load the configuration
     (require 'org)
     (org-babel-load-file config-org)

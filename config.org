@@ -13,7 +13,8 @@ These two functions allows to edit and reload the config directly in emacs.
     "Compile config.org and execute config.el"
     (interactive)
     (require 'org)
-    (org-babel-load-file (expand-file-name "config.org" user-emacs-directory)))
+    (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
+    (byte-compile-file (expand-file-name "config.el" user-emacs-directory)))
 #+END_SRC
 
 * Setup
@@ -61,8 +62,8 @@ Refresh package if it is needed.
 If =use-package= is not installed, install it.
 
 #+BEGIN_SRC emacs-lisp
-  (package-refresh-contents)
-
+  (when (not package-archive-contents)
+    (package-refresh-contents))
   (unless (package-installed-p 'use-package)
     (message "`use-package' not found.  Installing...")
     (package-install 'use-package))
@@ -203,6 +204,8 @@ Set a nice font.
   (set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 120)
   (set-face-attribute 'mode-line nil :family "Segoe UI" :height 120)
   (set-face-attribute 'mode-line-inactive nil :family "Segoe UI" :height 120)
+
+  (set-fontset-font t 'unicode "Noto Emoji" nil 'prepend)
 #+END_SRC
 
 Highlight the current line.
@@ -349,17 +352,6 @@ Use flycheck to have better errors reports.
 
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck)
-#+END_SRC
-
-** Better undo
-
-=undo-tree= visualises undo history as a tree for easy navigation.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package undo-tree
-    :diminish global-undo-tree-mode
-    :config
-    (global-undo-tree-mode 1))
 #+END_SRC
 
 ** Evil mode
