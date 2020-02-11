@@ -245,7 +245,7 @@ Show the lines numbers
      (setq-default find-file-visit-truename t)
 
      (use-package doom-modeline
-       :quelpa (eg
+       :quelpa (doom-modeline
          :fetcher github
          :repo "seagle0128/doom-modeline")
        :hook (after-init . doom-modeline-mode)
