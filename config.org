@@ -199,11 +199,12 @@ Set a nice font.
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
 
-  (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
-  (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
-  (set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 120)
-  (set-face-attribute 'mode-line nil :family "Segoe UI" :height 120)
-  (set-face-attribute 'mode-line-inactive nil :family "Segoe UI" :height 120)
+  (set-face-attribute 'default nil :family "IBM Plex Mono" :height 110)
+  (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 110)
+  (set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
+
+  (set-face-attribute 'mode-line nil :family "Noto Sans")
+  (set-face-attribute 'mode-line-inactive nil :family "Noto Sans")
 
   (set-fontset-font t 'unicode "Noto Emoji" nil 'prepend)
 #+END_SRC
@@ -241,8 +242,9 @@ Show the lines numbers
      (use-package doom-modeline
        :hook (after-init . doom-modeline-mode)
        :config
+
        ;; How tall the mode-line should be (only respected in GUI Emacs).
-       (setq doom-modeline-height 35)
+       (setq doom-modeline-height 70)
 
        ;; How wide the mode-line bar should be (only respected in GUI Emacs).
        (setq doom-modeline-bar-width 3)
@@ -599,6 +601,11 @@ Show bullet points for the header
     (with-eval-after-load 'winum
       (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
     :config
+
+    (set-face-attribute 'treemacs-file-face nil :family "Noto Sans")
+    (set-face-attribute 'treemacs-directory-face nil :family "Noto Sans")
+    (set-face-attribute 'treemacs-root-face nil :family "Noto Sans")
+
     (progn
       (setq-default treemacs-collapse-dirs                 (if (executable-find "python") 3 0)
             treemacs-deferred-git-apply-delay      0.5
