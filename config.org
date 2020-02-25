@@ -42,6 +42,8 @@ This makes emacs use the .custom file for its custom variable rather than modify
   (setq custom-file (expand-file-name ".custom" user-emacs-directory))
   (if (file-exists-p custom-file)
       (load custom-file))
+
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
 #+END_SRC
 
 ** Configure package sources
@@ -202,11 +204,12 @@ Set a nice font.
 
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
-  (set-default-coding-systems 'utf-8)
+  (set-default-coding-systems 'utf-8-unix)
 
-  (set-face-attribute 'default nil :family "IBM Plex Mono" :height 110)
-  (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 110)
+  (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
+  (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
   (set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
+  (set-face-attribute 'mode-line nil :family "Noto Sans" :height 120)
 
   (set-fontset-font t 'unicode "Noto Emoji" nil 'prepend)
 #+END_SRC
@@ -226,6 +229,15 @@ Show the lines numbers
                    display-line-numbers-widen t)
      (add-hook 'text-mode-hook #'display-line-numbers-mode)
      (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+#+END_SRC
+
+Show indent guides
+
+#+BEGIN_SRC emacs-lisp
+  (use-package highlight-indent-guides
+    :config
+    (setq highlight-indent-guides-method 'column)
+    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 #+END_SRC
 
 
@@ -464,6 +476,15 @@ Move the ivy frame to a postframe (popup window).
     (ivy-posframe-mode 1))
 #+END_SRC
 
+Add description to ivy completion
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-rich
+    :config
+    (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
+    (ivy-rich-mode 1))
+#+END_SRC
+
 =counsel= is a collection of =ivy= enhanced versions of common Emacs commands. I haven't bound much as =ivy-mode= takes care of most things.
 
 #+BEGIN_SRC emacs-lisp
@@ -519,14 +540,6 @@ Suggest next keys to me based on currently entered key combination.
         scroll-conservatively 100000)
 #+END_SRC
 
-** Distraction free
-
-#+BEGIN_SRC emacs-lisp
-     (use-package olivetti
-       :config
-       (setq olivetti-hide-mode-line t))
-#+END_SRC
-
 ** Org mode
 
 #+BEGIN_SRC emacs-lisp
@@ -560,8 +573,6 @@ Suggest next keys to me based on currently entered key combination.
                '(lambda ()
                   (setq line-spacing 0.2) ;; Add more line padding for readability
                   (variable-pitch-mode 1) ;; All fonts with variable pitch.
-                  (olivetti-mode)
-                  (olivetti-set-width 120)
                   (display-line-numbers-mode -1)
                   (mapc
                    (lambda (face) ;; Other fonts with fixed-pitch.
@@ -759,6 +770,14 @@ Use evil keybindings for magit.
           evil-magit-use-z-for-folds t))
 #+END_SRC
 
+** Folding support
+
+Add folding with origami mode, it provides suport for lsp-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package origami)
+#+END_SRC
+
 * Languages
 ** Find definitions/references
 
@@ -778,12 +797,6 @@ Use a snippet plugin for the lsp servers.
   (use-package ivy-yasnippet)
 #+END_SRC
 
-** Rust major mode
-
-#+BEGIN_SRC emacs-lisp
-  (use-package rust-mode)
-#+END_SRC
-
 ** C / C++ Configuration
 
 Set the default formatting when formmating in emacs and indenting.
@@ -791,15 +804,6 @@ Set the default formatting when formmating in emacs and indenting.
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style "bsd"
         c-basic-offset 4)
-#+END_SRC
-
-Use tabs
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'c++-mode-hook
-            '(lambda ()
-               (setq indent-tabs-mode t)
-               ))
 #+END_SRC
 
 Install a plugin for the language server =ccls=
@@ -810,11 +814,9 @@ Install a plugin for the language server =ccls=
     :custom
     (ccls-args nil)
     (ccls-executable (executable-find "ccls"))
-    (projectile-project-root-files-top-down-recurring
-     (append '("compile_commands.json" ".ccls")
-             projectile-project-root-files-top-down-recurring))
     :config (push ".ccls-cache" projectile-globally-ignored-directories)
     (setq ccls-sem-highlight-method 'font-lock)
+    (setq ccls-initialization-options '(:compilationDatabaseDirectory "build" :completion (:detailedLabel t)))
 
 
     ;; For rainbow semantic highlighting
@@ -985,6 +987,7 @@ Make a minimal major-mode for maniascript.
     )
 
   (add-to-list 'auto-mode-alist '("\\.Script.txt\\'" . maniascript-mode))
+  (add-to-list 'auto-mode-alist '("\\.ms\\'" . maniascript-mode))
 #+END_SRC
 
 ** Python
@@ -1022,8 +1025,20 @@ Use the excellent package =elpy= to provide a nice python integration.
     (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
   (use-package lsp-treemacs)
   (use-package dap-mode)
+  (use-package lsp-origami
+    :config
+    (add-hook 'origami-mode-hook #'lsp-origami-mode)
+    (global-origami-mode))
 
   ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+#+END_SRC
+
+** Rust setup
+
+Major mode for syntax highlighting
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode)
 #+END_SRC
 
 * Keybindings
