@@ -99,6 +99,7 @@ Fix some hangs in Windows
 
 #+BEGIN_SRC emacs-lisp
      (setq w32-get-true-file-attributes nil)
+     (setq read-process-output-max (* 1024 1024))
 #+END_SRC
 
 * Preferences
@@ -1009,8 +1010,9 @@ Use the excellent package =elpy= to provide a nice python integration.
     :hook (prog-mode . lsp)
     :init
     (setq lsp-prefer-flymake nil)
+    (setq lsp-prefer-capf t)
     :config
-
+    (setq lsp-idle-delay 0.500)
     (add-to-list 'lsp-language-id-configuration '(maniascript-mode . "maniascript"))
 
     (lsp-register-client
@@ -1019,10 +1021,6 @@ Use the excellent package =elpy= to provide a nice python integration.
                       :server-id 'manialsp))
     )
 
-  (use-package lsp-ui)
-  (use-package company-lsp :after company  company-lsp
-    :config
-    (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil))
   (use-package lsp-treemacs)
   (use-package dap-mode)
   (use-package lsp-origami
