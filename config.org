@@ -29,7 +29,7 @@ Do not forget to reset it to a reasonable value after.
   ;; Restore after startup
   (add-hook 'after-init-hook
             (lambda ()
-              (setq gc-cons-threshold 1000000)
+              (setq gc-cons-threshold 100000000)
               (message "gc-cons-threshold restored to %S"
                        gc-cons-threshold)))
 #+END_SRC
@@ -261,7 +261,7 @@ Show indent guides
          :config
 
          ;; How tall the mode-line should be (only respected in GUI Emacs).
-         (setq doom-modeline-height 70)
+         (setq doom-modeline-height 35)
          (set-face-attribute 'mode-line nil :family "Noto Sans")
          (set-face-attribute 'mode-line-inactive nil :family "Noto Sans")
 
