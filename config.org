@@ -981,6 +981,7 @@ Make a minimal major-mode for maniascript.
     (setq-local comment-start-skip "/\\*+[ \t]*")
     (setq-local comment-end "*/")
     (setq-local comment-end-skip "[ \t]*\\*+/")
+    (setq-local indent-line-function 'c-indent-line)
     )
 
   (add-to-list 'auto-mode-alist '("\\.Script.txt\\'" . maniascript-mode))
