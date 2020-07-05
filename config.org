@@ -102,6 +102,12 @@ Fix some hangs in Windows
      (setq read-process-output-max (* 1024 1024))
 #+END_SRC
 
+** Profiler
+
+#+BEGIN_SRC emacs-lisp
+(use-package esup :commands esup)
+#+END_SRC
+
 * Preferences
 
 Don't display the help screen on startup.
@@ -231,16 +237,6 @@ Show the lines numbers
      (add-hook 'text-mode-hook #'display-line-numbers-mode)
      (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 #+END_SRC
-
-Show indent guides
-
-#+BEGIN_SRC emacs-lisp
-  (use-package highlight-indent-guides
-    :config
-    (setq highlight-indent-guides-method 'column)
-    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-#+END_SRC
-
 
 ** Modeline
 
@@ -877,51 +873,51 @@ Install some plugins to use cmake
 #+END_SRC
 
 In order to compile on Windows, some enviroment variables are needed to find the Visual Studio toolchain.
-It is hardcoded for Visual Studio 2019 Community.
+It is hardcoded for Visual Studio 2019 Preview.
 
 #+BEGIN_SRC emacs-lisp
   (when (eq system-type 'windows-nt)
     (setenv "PATH"
             (concat
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.25.28610\\bin\\HostX64\\x64"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\VC\\Tools\\MSVC\\14.27.28826\\bin\\HostX64\\x64"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\VC\\VCPackages"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\Common7\\IDE\\VC\\VCPackages"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TeamFoundation\\Team Explorer"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\Common7\\IDE\\CommonExtensions\\Microsoft\\TeamFoundation\\Team Explorer"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\bin\\Roslyn"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\MSBuild\\Current\\bin\\Roslyn"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Performance Tools\\x64"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\Team Tools\\Performance Tools\\x64"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Performance Tools"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\Team Tools\\Performance Tools"
              path-separator
              "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Common\\VSPerfCollectionTools\\vs2019\\\\x64"
              path-separator
              "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Common\\VSPerfCollectionTools\\vs2019\\"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.6.1 Tools\\x64\\"
+             "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64\\"
              path-separator
              "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.18362.0\\x64"
              path-separator
              "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x64"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\\\MSBuild\\Current\\Bin"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\\\MSBuild\\Current\\Bin"
              path-separator
              "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\Common7\\IDE\\"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\Common7\\Tools\\"
              path-separator
              (getenv "PATH")))
 
     (setenv "INCLUDE"
             (concat
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.25.28610\\include"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\VC\\Tools\\MSVC\\14.27.28826\\include"
              path-separator
-             "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6.1\\include\\um"
+             "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\include\\um"
              path-separator
              "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\ucrt"
              path-separator
@@ -936,9 +932,9 @@ It is hardcoded for Visual Studio 2019 Community.
 
     (setenv "LIB"
             (concat
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.25.28610\\lib\\x64"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\VC\\Tools\\MSVC\\14.27.28826\\lib\\x64"
              path-separator
-             "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6.1\\lib\\um\\x64"
+             "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\lib\\um\\x64"
              path-separator
              "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.18362.0\\ucrt\\x64"
              path-separator
@@ -947,9 +943,9 @@ It is hardcoded for Visual Studio 2019 Community.
 
     (setenv "LIBPATH"
             (concat
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.25.28610\\lib\\x64"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\VC\\Tools\\MSVC\\14.27.28826\\lib\\x64"
              path-separator
-             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.25.28610\\lib\\x86\\store\\references"
+             "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Preview\\VC\\Tools\\MSVC\\14.27.28826\\lib\\x86\\store\\references"
              path-separator
              "C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.18362.0"
              path-separator
@@ -1017,7 +1013,6 @@ Make a minimal major-mode for maniascript.
     (setq-local comment-start-skip "/\\*+[ \t]*")
     (setq-local comment-end "*/")
     (setq-local comment-end-skip "[ \t]*\\*+/")
-    (setq-local indent-line-function 'c-indent-line)
     )
 
   (add-to-list 'auto-mode-alist '("\\.Script.txt\\'" . maniascript-mode))
@@ -1044,6 +1039,7 @@ Use the excellent package =elpy= to provide a nice python integration.
     :init
     (setq lsp-prefer-flymake nil)
     (setq lsp-prefer-capf t)
+    (setq lsp-clients-clangd-args '("-cross-file-rename"))
     :config
     (setq lsp-idle-delay 0.500)
     (add-to-list 'lsp-language-id-configuration '(maniascript-mode . "maniascript"))
@@ -1052,6 +1048,7 @@ Use the excellent package =elpy= to provide a nice python integration.
      (make-lsp-client :new-connection (lsp-stdio-connection "manialsp.exe")
                       :major-modes '(maniascript-mode)
                       :server-id 'manialsp))
+    (setq lsp-rust-server 'rust-analyzer)
     )
 
   (use-package lsp-treemacs)
