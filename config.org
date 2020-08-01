@@ -835,24 +835,6 @@ Set the default formatting when formmating in emacs and indenting.
         c-basic-offset 4)
 #+END_SRC
 
-Install a plugin for the language server =ccls=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ccls
-    :after projectile
-    :custom
-    (ccls-args nil)
-    (ccls-executable (executable-find "ccls"))
-    :config (push ".ccls-cache" projectile-globally-ignored-directories)
-    (setq ccls-sem-highlight-method 'font-lock)
-    (setq ccls-initialization-options '(:compilationDatabaseDirectory "build" :completion (:detailedLabel t)))
-
-
-    ;; For rainbow semantic highlighting
-    ;; (ccls-use-default-rainbow-sem-highlight)
-    )
-#+END_SRC
-
 Install some plugins to use cmake
 
 #+BEGIN_SRC emacs-lisp
