@@ -74,11 +74,6 @@ If =use-package= is not installed, install it.
   (setq use-package-minimum-reported-time 0
         use-package-verbose t
         use-package-compute-statistics t)
-
-  (use-package quelpa-use-package
-    :init (setq quelpa-update-melpa-p nil)
-    :config (quelpa-use-package-activate-advice))
-
 #+END_SRC
 
 By default all packages should be installed from package manager as that's the usual path. This is equivalent to setting =:ensure t= on each call to =use-package=. To disable set =:ensure nil= (this is done automatically for any packages using =:load-path= so shouldn't generally be needed).
@@ -251,9 +246,6 @@ Show the lines numbers
        (setq-default find-file-visit-truename t)
 
        (use-package doom-modeline
-         :quelpa ((doom-modeline
-           :fetcher github
-           :repo "seagle0128/doom-modeline") :upgrade t)
          :hook (after-init . doom-modeline-mode)
          :config
 
