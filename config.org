@@ -939,7 +939,7 @@ It is hardcoded for Visual Studio 2019 Community.
 
 Make a minimal major-mode for maniascript.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC
   (setq maniascript-mode-syntax-table
         (let ( (synTable (make-syntax-table c-mode-syntax-table)))
           ;; syntax-table things
@@ -1042,6 +1042,16 @@ Major mode for syntax highlighting
 #+BEGIN_SRC emacs-lisp
   (use-package rust-mode)
 #+END_SRC
+
+** Tree sitter
+
+#+BEGIN_SRC emacs-lisp
+(use-package tree-sitter)
+(use-package tree-sitter-langs)
+(global-tree-sitter-mode)
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+#+END_SRC
+
 
 * Keybindings
 
