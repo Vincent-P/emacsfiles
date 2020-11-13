@@ -72,6 +72,12 @@ Arguments the same as in `compile'."
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (setq w32-get-true-file-attributes nil) ;; fix win32 perf?
+
+(setq tab-always-indent 'complete)
+(setq c-tab-always-indent 'complete)
+(setq-default c-basic-offset 4)
+(setq indent-tabs-mode nil)
+(setq c-default-style "linux")
 ;; ---
 
 ;; --- use-package initialization
@@ -127,8 +133,8 @@ Arguments the same as in `compile'."
 ;; vim-like bindings everywhere in emacs
 (use-package evil-collection
   :after evil
-  ;; :custom
-  ;; (evil-collection-company-use-tng nil)
+  :custom
+  (evil-collection-company-use-tng nil) ;; tng is not compatible with lsp/yasnippet
   :init
   (evil-collection-init))
 
@@ -150,10 +156,12 @@ Arguments the same as in `compile'."
 (use-package prescient
   :custom
   (prescient-filter-method '(literal regexp initialism fuzzy)))
+
 (use-package company-prescient
   :after company
   :init
   (company-prescient-mode))
+
 (use-package selectrum-prescient
   :init
   (selectrum-prescient-mode))
@@ -183,6 +191,11 @@ Arguments the same as in `compile'."
   (setq lsp-idle-delay 0.500)
   )
 
+;; Snippets system (to have better autocompletion from lsp servers that support snippets)
+(use-package yasnippet
+  :config
+  (yas-global-mode 1))
+
 ;; Error reporting
 (use-package flycheck)
 
@@ -197,10 +210,10 @@ Arguments the same as in `compile'."
   (setq company-tooltip-align-annotations 't)
   (setq global-company-mode t)
   (setq company-backends '(company-capf))
-  ; use tab to autocomplete
+  ;; use tab to autocomplete
   (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
   (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-  ; shift tab to go backwards
+  ;; shift tab to go backwards
   (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
   (define-key company-active-map (kbd "<backtab>") 'company-select-previous))
 
@@ -385,21 +398,24 @@ Arguments the same as in `compile'."
 ;; set bindings
 (use-package general
   :config
-  ;; replace default emacs keybindings
+
+
   (general-define-key
-   ;; Window configs shortcuts
-   "M-1" 'eyebrowse-switch-to-window-config-1
-   "M-2" 'eyebrowse-switch-to-window-config-2
-   "M-3" 'eyebrowse-switch-to-window-config-3
-   "M-4" 'eyebrowse-switch-to-window-config-4
-   "M-5" 'eyebrowse-switch-to-window-config-5
-   )
+   :states '(insert emacs)
+   "C-SPC"  'company-complete)
 
   (general-define-key
    :states '(normal visual emacs)
    ;; LSP
    "gr"  '(lsp-find-references :which-key "find references")
    "gd"  '(lsp-find-definition :which-key "find definition")
+
+   ;; Workspaces
+   "M-1" 'eyebrowse-switch-to-window-config-1
+   "M-2" 'eyebrowse-switch-to-window-config-2
+   "M-3" 'eyebrowse-switch-to-window-config-3
+   "M-4" 'eyebrowse-switch-to-window-config-4
+   "M-5" 'eyebrowse-switch-to-window-config-5
    )
 
   ;; define normal state keybindings
@@ -450,6 +466,6 @@ Arguments the same as in `compile'."
    "a"   '(:ignore t :which-key "Applications")
    "ad"  'dired
    )
-)
+  )
 
 ;; ---
