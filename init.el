@@ -398,8 +398,8 @@ Arguments the same as in `compile'."
   (general-define-key
    :states '(normal visual emacs)
    ;; LSP
-   ;; "gr"  '(lsp-find-references :which-key "find references")
-   ;; "gd"  '(lsp-find-definition :which-key "find definition")
+   "gr"  '(lsp-find-references :which-key "find references")
+   "gd"  '(lsp-find-definition :which-key "find definition")
    )
 
   ;; define normal state keybindings
@@ -422,7 +422,7 @@ Arguments the same as in `compile'."
    "pp"  '(project-switch-project :which-key "switch project")
    "pb"  '(project-switch-to-buffer :which-key "switch buffer")
    "pf"  '(project-find-file :which-key "find file")
-   ;; "p/"  '(project-ag :which-key "find in project")
+   "p/"  '(project-find-regexp :which-key "find in project")
    "pc"  '(project-build :which-key "compile")
 
    ;; Files
