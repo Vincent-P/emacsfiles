@@ -246,10 +246,6 @@ Arguments the same as in `compile'."
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(use-package unicode-fonts
-  :config
-  (unicode-fonts-setup))
-
 ;; display parens in different colors
 (use-package rainbow-delimiters
   :config
