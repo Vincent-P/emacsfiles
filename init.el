@@ -56,15 +56,28 @@ Arguments the same as in `compile'."
 (setq-default left-fringe-width 1)
 (setq-default right-fringe-width 1)
 
-
+;; fonts
 (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
 (set-face-attribute 'mode-line nil :family "Noto Sans" :height 120)
-
-;; Emoji: 😄, 🤦, 🏴󠁧󠁢󠁳󠁣󠁴󠁿
+; 😄, 🤦, 🏴󠁧󠁢󠁳󠁣󠁴󠁿
 (set-fontset-font t 'symbol "Noto Color Emoji" nil)
 (set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
+
+;; show whitespace
+;; (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
+;;
+;; (setq whitespace-display-mappings
+;;       '(
+;;         (space-mark 32 [183] [46]) ; 183 middle dot
+;;         (newline-mark 10 [172 10]) ; 172 ¬ not sign
+;;         (tab-mark 9 [187 9] [92 9]) ; tab
+;; ))
+;;
+;;
+;; (global-whitespace-mode)
+
 ;; ---
 
 ;; --- Emacs behaviour
