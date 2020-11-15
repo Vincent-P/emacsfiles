@@ -61,6 +61,10 @@ Arguments the same as in `compile'."
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
 (set-face-attribute 'mode-line nil :family "Noto Sans" :height 120)
+
+;; Emoji: 😄, 🤦, 🏴󠁧󠁢󠁳󠁣󠁴󠁿
+(set-fontset-font t 'symbol "Noto Color Emoji" nil)
+(set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
 ;; ---
 
 ;; --- Emacs behaviour
