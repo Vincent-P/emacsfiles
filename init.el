@@ -95,7 +95,14 @@ Arguments the same as in `compile'."
 (setq-default c-basic-offset 4)
 (setq indent-tabs-mode nil)
 (setq c-default-style "linux")
+
+;; Set backup files in the tmp directory
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 ;; ---
+
 
 ;; --- use-package initialization
 
@@ -226,13 +233,7 @@ Arguments the same as in `compile'."
   (setq company-show-numbers t)
   (setq company-tooltip-align-annotations 't)
   (setq global-company-mode t)
-  (setq company-backends '(company-capf))
-  ;; use tab to autocomplete
-  (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-  ;; shift tab to go backwards
-  (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-  (define-key company-active-map (kbd "<backtab>") 'company-select-previous))
+  (setq company-backends '(company-capf)))
 
 ;; tree-sitter based syntax highlighting
 (use-package tree-sitter
