@@ -38,7 +38,6 @@ Arguments the same as in `compile'."
 (if (file-exists-p custom-file)
     (load custom-file))
 
-
 ;; --- appearance
 (setq inhibit-startup-screen t)
 
@@ -61,7 +60,6 @@ Arguments the same as in `compile'."
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
 (set-face-attribute 'mode-line nil :family "Noto Sans" :height 120)
-; 😄, 🤦, 🏴󠁧󠁢󠁳󠁣󠁴󠁿
 (set-fontset-font t 'symbol "Noto Color Emoji" nil)
 (set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
 
@@ -142,6 +140,16 @@ Arguments the same as in `compile'."
   (setq evil-split-window-below t) ;; like vim's 'splitbelow'
   (setq evil-shift-round nil)
   (setq evil-want-C-u-scroll t)
+
+  ;; modeline format
+  (setq evil-normal-state-tag   (propertize " NORMAL " 'face '((:background "yellow green" :foreground "black")))
+        evil-emacs-state-tag    (propertize " EMACS " 'face '((:background "orange" :foreground "black")))
+        evil-insert-state-tag   (propertize " INSERT " 'face '((:background "light sky blue") :foreground "black"))
+        evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "indian red" :foreground "black")))
+        evil-motion-state-tag   (propertize " MOTION " 'face '((:background "dark orchid") :foreground "black"))
+        evil-visual-state-tag   (propertize " VISUAL " 'face '((:background "golden rod" :foreground "black")))
+        evil-operator-state-tag (propertize " OPERATOR " 'face '((:background "dark khaki" :foreground "black"))))
+
   :config
   (evil-mode 1))
 
@@ -193,6 +201,9 @@ Arguments the same as in `compile'."
 ;; i3 like workspaces
 (use-package eyebrowse
   :config
+  (setq eyebrowse-mode-line-style 'current)
+  (setq eyebrowse-mode-line-left-delimiter "")
+  (setq eyebrowse-mode-line-right-delimiter "")
   (eyebrowse-mode))
 
 ;; git integration
@@ -225,7 +236,6 @@ Arguments the same as in `compile'."
 
 ;; completion package
 (use-package company
-  :diminish
   :config
   (setq company-begin-commands '(self-insert-command))
   (setq company-idle-delay .1)
@@ -274,11 +284,40 @@ Arguments the same as in `compile'."
 (use-package modus-vivendi-theme)
 
 ;; modeline theme
+(use-package minions
+  :init (minions-mode)
+  :config
+  (setq minions-mode-line-lighter "...")
+  (setq minions-direct '(flycheck-mode)))
+
 (use-package moody
   :config
   (setq x-underline-at-descent-line t)
   (moody-replace-mode-line-buffer-identification)
   (moody-replace-vc-mode))
+
+(let ((my_format '(
+                  "%e"
+                  mode-line-front-space
+                  (:eval evil-mode-line-tag)
+                  " "
+                  (eyebrowse-mode (:eval (eyebrowse-mode-line-indicator)))
+                  " "
+
+                  (:eval (moody-tab (format-mode-line (propertized-buffer-identification (if (buffer-modified-p) "⭐️ %b" "%b"))) 20 'down))
+
+                  " "
+                  "%02l:%02c" ;; line and column
+                  " "
+
+                  (vc-mode moody-vc-mode)
+                  "  "
+                  (:eval "%m")
+                  minions-mode-line-modes
+                  mode-line-end-spaces
+                  )))
+  (progn (setq mode-line-format my_format)
+         (setq-default mode-line-format my_format)))
 
 ;; from https://protesilaos.com/modus-themes/#h:1777c247-1b56-46b7-a4ce-54e720b33d06
 (defmacro modus-themes-format-sexp (sexp &rest objects)
@@ -324,6 +363,7 @@ Arguments the same as in `compile'."
     (disable-theme 'modus-vivendi)
     (modus-operandi-theme-load)))
 
+(setq x-underline-at-descent-line t)
 (modus-vivendi-theme-load)
 
 ;; ---
