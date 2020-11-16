@@ -19,7 +19,8 @@
 
 ;; fonts
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
-(load-theme 'dracula t)
+(custom-set-variables '(modus-vivendi-theme-syntax 'alt-syntax))
+(load-theme 'modus-vivendi t)
 
 (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
@@ -28,23 +29,25 @@
 (set-face-attribute 'mode-line nil
                     :family "Noto Sans Mono"
                     :height 110
-                    :background "#44475a"
+                    :background "grey20"
                     :foreground "white"
-                    :box '(:line-width 4 :color "#44475a")
+                    :box '(:line-width 4 :color "grey20")
                     :overline nil
                     :underline nil)
 
 (set-face-attribute 'mode-line-inactive nil
                     :family "Noto Sans Mono"
                     :height 110
-                    :background "#282a36"
+                    :background "black"
                     :foreground "white"
-                    :box '(:line-width 4 :color "#282a36")
+                    :box '(:line-width 4 :color "black")
                     :overline nil
                     :underline nil)
 
-(set-fontset-font t 'symbol "Segoe UI Emoji" nil)
-(set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
+; 😀 😃 😄 👋 🤚 🖐 ✋ 🖖 👌🧳 🌂 ☂️ 🧵 🧶 👓⚽️ 🏀 🏈 ⚾️ 🥎 🎾  🚕 🚙 🚌 🚎 🏎
+(setq use-default-font-for-symbols nil)
+(set-fontset-font t 'symbol "Noto Color Emoji" nil)
+(set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
 
 ;; show whitespace
 ;; (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
