@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defun disable-all-themes ()
   "disable all active themes."
   (dolist (i custom-enabled-themes)
@@ -56,10 +58,14 @@ Arguments the same as in `compile'."
 (setq-default right-fringe-width 1)
 
 ;; fonts
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'dracula t)
+
 (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
-(set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
-(set-face-attribute 'mode-line nil :family "Noto Sans" :height 120)
+(set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 120)
+(set-face-attribute 'mode-line nil :family "Segoe UI" :height 120)
+
 (set-fontset-font t 'symbol "Segoe UI Emoji" nil)
 (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
 
@@ -75,6 +81,24 @@ Arguments the same as in `compile'."
 ;;
 ;;
 ;; (global-whitespace-mode)
+
+(setq-default mode-line-format (list
+                        ""
+                        'mode-line-modified
+                        'mode-line-buffer-identification
+                        " "
+                        'mode-line-position
+                        " "
+                        '(vc-mode vc-mode)
+                        " "
+                        'mode-name
+                        " "
+                        "["
+                        '(:eval (symbol-name buffer-file-coding-system))
+                        "]"
+                        ))
+
+(setq mode-line-format (default-value 'mode-line-format))
 
 ;; ---
 
@@ -142,13 +166,14 @@ Arguments the same as in `compile'."
   (setq evil-want-C-u-scroll t)
 
   ;; modeline format
-  (setq evil-normal-state-tag   (propertize " NORMAL " 'face '((:background "yellow green" :foreground "black")))
-        evil-emacs-state-tag    (propertize " EMACS " 'face '((:background "orange" :foreground "black")))
-        evil-insert-state-tag   (propertize " INSERT " 'face '((:background "light sky blue") :foreground "black"))
-        evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "indian red" :foreground "black")))
-        evil-motion-state-tag   (propertize " MOTION " 'face '((:background "dark orchid") :foreground "black"))
-        evil-visual-state-tag   (propertize " VISUAL " 'face '((:background "golden rod" :foreground "black")))
-        evil-operator-state-tag (propertize " OPERATOR " 'face '((:background "dark khaki" :foreground "black"))))
+  (setq evil-mode-line-format nil)
+  (setq evil-normal-state-tag   (propertize " N " 'face '((:background "yellow green" :foreground "black")))
+        evil-emacs-state-tag    (propertize " E " 'face '((:background "orange" :foreground "black")))
+        evil-insert-state-tag   (propertize " I " 'face '((:background "light sky blue") :foreground "black"))
+        evil-replace-state-tag  (propertize " R " 'face '((:background "indian red" :foreground "black")))
+        evil-motion-state-tag   (propertize " M " 'face '((:background "dark orchid") :foreground "black"))
+        evil-visual-state-tag   (propertize " V " 'face '((:background "goldenrod" :foreground "black")))
+        evil-operator-state-tag (propertize " O " 'face '((:background "dark khaki" :foreground "black"))))
 
   :config
   (evil-mode 1))
@@ -279,83 +304,12 @@ Arguments the same as in `compile'."
   :config
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-;; modus themes
-(use-package modus-operandi-theme)
-(use-package modus-vivendi-theme)
-
 ;; modeline theme
 (use-package minions
   :init (minions-mode)
   :config
   (setq minions-mode-line-lighter "...")
   (setq minions-direct '(flycheck-mode)))
-
-(let ((my_format '(
-                  "%e"
-                  mode-line-front-space
-                  (:eval evil-mode-line-tag)
-                  " "
-                  (eyebrowse-mode (:eval (eyebrowse-mode-line-indicator)))
-                  " "
-                  (:eval (if (buffer-modified-p) "⭐️ %b" "%b") 20 'down)
-                  " "
-                  "%02l:%02c" ;; line and column
-                  " "
-                  (vc-mode vc-mode)
-                  "  "
-                  (:eval "%m")
-                  minions-mode-line-modes
-                  mode-line-end-spaces
-                  )))
-  (progn (setq mode-line-format my_format)
-         (setq-default mode-line-format my_format)))
-
-;; from https://protesilaos.com/modus-themes/#h:1777c247-1b56-46b7-a4ce-54e720b33d06
-(defmacro modus-themes-format-sexp (sexp &rest objects)
-  `(eval (read (format ,(format "%S" sexp) ,@objects))))
-
-(dolist (theme '("operandi" "vivendi"))
-  (modus-themes-format-sexp
-   (defun modus-%1$s-theme-load ()
-     (setq modus-%1$s-theme-slanted-constructs t
-           modus-%1$s-theme-bold-constructs t
-           modus-%1$s-theme-fringes 'subtle ; {nil,'subtle,'intense}
-           modus-%1$s-theme-mode-line 'nil ; {nil,'3d,'moody}
-           modus-%1$s-theme-syntax 'alt-syntax ; {nil,faint,'yellow-comments,'green-strings,'yellow-comments-green-strings,'alt-syntax,'alt-syntax-yellow-comments}
-           modus-%1$s-theme-intense-hl-line nil
-           modus-%1$s-theme-intense-paren-match nil
-           modus-%1$s-theme-links 'faint ; {nil,'faint,'neutral-underline,'faint-neutral-underline,'no-underline}
-           modus-%1$s-theme-no-mixed-fonts nil
-           modus-%1$s-theme-prompts nil ; {nil,'subtle,'intense}
-           modus-%1$s-theme-completions 'moderate ; {nil,'moderate,'opinionated}
-           modus-%1$s-theme-diffs nil ; {nil,'desaturated,'fg-only}
-           modus-%1$s-theme-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
-           modus-%1$s-theme-headings  ; Read further below in the manual for this one
-           '((1 . section)
-             (2 . line)
-             (t . rainbow-line-no-bold))
-           modus-%1$s-theme-variable-pitch-headings nil
-           modus-%1$s-theme-scale-headings t
-           modus-%1$s-theme-scale-1 1.1
-           modus-%1$s-theme-scale-2 1.15
-           modus-%1$s-theme-scale-3 1.21
-           modus-%1$s-theme-scale-4 1.27
-           modus-%1$s-theme-scale-5 1.33)
-     (load-theme 'modus-%1$s t))
-   theme))
-
-(defun modus-themes-toggle ()
-  "Toggle between `modus-operandi' and `modus-vivendi' themes."
-  (interactive)
-  (if (eq (car custom-enabled-themes) 'modus-operandi)
-      (progn
-        (disable-theme 'modus-operandi)
-        (modus-vivendi-theme-load))
-    (disable-theme 'modus-vivendi)
-    (modus-operandi-theme-load)))
-
-(setq x-underline-at-descent-line t)
-(modus-vivendi-theme-load)
 
 ;; ---
 
@@ -529,7 +483,7 @@ Arguments the same as in `compile'."
 
    ;; Theme
    "t" '(:ignore t :which-key "Themes")
-   "tt" '(modus-themes-toggle :which-key "toggle")
+   ; "tt" '(modus-themes-toggle :which-key "toggle")
 
    ;; Applications
    "a"   '(:ignore t :which-key "Applications")
