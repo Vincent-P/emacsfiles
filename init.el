@@ -26,83 +26,25 @@ Arguments the same as in `compile'."
 ;; ----------------------------
 
 ;; Avoid GC stalls during loading
-(setq gc-cons-threshold 64000000)
+(setq gc-cons-threshold 64000000
+      gc-cons-percentage 0.6)
+
+(defvar my--file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
 
 ;; Restore to a reasonable value after startup
-(add-hook 'after-init-hook
+(add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold 100000000)
-            (message "gc-cons-threshold restored to %S"
-                     gc-cons-threshold)))
+            (setq gc-cons-threshold 100000000
+                  gc-cons-percentage 0.1
+                  file-name-handler-alist my--file-name-handler-alist)))
+
+;; --- Emacs behaviour
 
 ;; Put custom settings in .custom dir
 (setq custom-file (expand-file-name ".custom" user-emacs-directory))
 (if (file-exists-p custom-file)
     (load custom-file))
-
-;; --- appearance
-(setq inhibit-startup-screen t)
-
-(global-visual-line-mode 1) ;; wrap lines
-(global-hl-line-mode 1) ;; highlight current line
-(column-number-mode 1) ;; display the column in the modeline
-
-;; hide default ui
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(tooltip-mode    -1)
-(menu-bar-mode   -1)
-
-;; remove borders
-(setq-default left-fringe-width 1)
-(setq-default right-fringe-width 1)
-
-;; fonts
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(load-theme 'dracula t)
-
-(set-face-attribute 'default nil :family "Cascadia Code" :height 110)
-(set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
-(set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 120)
-(set-face-attribute 'mode-line nil :family "Segoe UI" :height 120)
-
-(set-fontset-font t 'symbol "Segoe UI Emoji" nil)
-(set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
-
-;; show whitespace
-;; (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
-;;
-;; (setq whitespace-display-mappings
-;;       '(
-;;         (space-mark 32 [183] [46]) ; 183 middle dot
-;;         (newline-mark 10 [172 10]) ; 172 ¬ not sign
-;;         (tab-mark 9 [187 9] [92 9]) ; tab
-;; ))
-;;
-;;
-;; (global-whitespace-mode)
-
-(setq-default mode-line-format (list
-                        ""
-                        'mode-line-modified
-                        'mode-line-buffer-identification
-                        " "
-                        'mode-line-position
-                        " "
-                        '(vc-mode vc-mode)
-                        " "
-                        'mode-name
-                        " "
-                        "["
-                        '(:eval (symbol-name buffer-file-coding-system))
-                        "]"
-                        ))
-
-(setq mode-line-format (default-value 'mode-line-format))
-
-;; ---
-
-;; --- Emacs behaviour
 
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8-unix)
@@ -123,6 +65,7 @@ Arguments the same as in `compile'."
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+
 ;; ---
 
 
