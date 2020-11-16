@@ -23,8 +23,9 @@
 
 (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
-(set-face-attribute 'variable-pitch nil :family "Segoe UI" :height 120)
-(set-face-attribute 'mode-line nil :family "Segoe UI" :height 120)
+(set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 110)
+(set-face-attribute 'mode-line nil :family "Noto Sans Mono" :height 110)
+(set-face-attribute 'mode-line-inactive nil :family "Noto Sans Mono" :height 110)
 
 (set-fontset-font t 'symbol "Segoe UI Emoji" nil)
 (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
@@ -42,24 +43,38 @@
 ;;
 ;; (global-whitespace-mode)
 
-(setq-default mode-line-format (list
-                        ""
-                        'mode-line-modified
-                        'mode-line-buffer-identification
-                        " "
-                        'mode-line-position
-                        " "
-                        '(vc-mode vc-mode)
-                        " "
-                        'mode-name
-                        " "
-                        "["
-                        '(:eval (symbol-name buffer-file-coding-system))
-                        "]"
-                        ))
+(defun simple-mode-line-render (left right)
+  "Return a string of `window-width' length.
+   Containing LEFT, and RIGHT aligned respectively."
+  (let ((available-width
+         (- (window-total-width)
+            (+ (length (format-mode-line left))
+               (length (format-mode-line right))))))
+    (append left
+            (list (format (format "%%%ds" available-width) ""))
+            right)))
+
+(setq-default
+ mode-line-format
+ '((:eval
+    (simple-mode-line-render
+     ;; Left.
+     (quote (" "
+             (eyebrowse-mode (:eval (eyebrowse-mode-line-indicator)))
+             evil-mode-line-tag
+             "%*"
+             mode-line-buffer-identification
+             " %02l:%02c "
+             ))
+     ;; Right.
+     (quote (""
+             " ["
+             (:eval (symbol-name buffer-file-coding-system))
+             "] "
+             mode-name
+             ))))))
 
 (setq mode-line-format (default-value 'mode-line-format))
-
 ;; ---
 
 

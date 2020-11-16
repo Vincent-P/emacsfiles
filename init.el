@@ -98,13 +98,13 @@ Arguments the same as in `compile'."
 
   ;; modeline format
   (setq evil-mode-line-format nil)
-  (setq evil-normal-state-tag   (propertize " N " 'face '((:background "yellow green" :foreground "black")))
-        evil-emacs-state-tag    (propertize " E " 'face '((:background "orange" :foreground "black")))
-        evil-insert-state-tag   (propertize " I " 'face '((:background "light sky blue") :foreground "black"))
-        evil-replace-state-tag  (propertize " R " 'face '((:background "indian red" :foreground "black")))
-        evil-motion-state-tag   (propertize " M " 'face '((:background "dark orchid") :foreground "black"))
-        evil-visual-state-tag   (propertize " V " 'face '((:background "goldenrod" :foreground "black")))
-        evil-operator-state-tag (propertize " O " 'face '((:background "dark khaki" :foreground "black"))))
+  ; (setq evil-normal-state-tag   (propertize " N " 'face '((:background "yellow green" :foreground "black")))
+  ;       evil-emacs-state-tag    (propertize " E " 'face '((:background "orange" :foreground "black")))
+  ;       evil-insert-state-tag   (propertize " I " 'face '((:background "light sky blue") :foreground "black"))
+  ;       evil-replace-state-tag  (propertize " R " 'face '((:background "indian red" :foreground "black")))
+  ;       evil-motion-state-tag   (propertize " M " 'face '((:background "dark orchid") :foreground "black"))
+  ;       evil-visual-state-tag   (propertize " V " 'face '((:background "goldenrod" :foreground "black")))
+  ;       evil-operator-state-tag (propertize " O " 'face '((:background "dark khaki" :foreground "black"))))
 
   :config
   (evil-mode 1))
