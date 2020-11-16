@@ -24,8 +24,24 @@
 (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 110)
-(set-face-attribute 'mode-line nil :family "Noto Sans Mono" :height 110)
-(set-face-attribute 'mode-line-inactive nil :family "Noto Sans Mono" :height 110)
+
+(set-face-attribute 'mode-line nil
+                    :family "Noto Sans Mono"
+                    :height 110
+                    :background "#44475a"
+                    :foreground "white"
+                    :box '(:line-width 4 :color "#44475a")
+                    :overline nil
+                    :underline nil)
+
+(set-face-attribute 'mode-line-inactive nil
+                    :family "Noto Sans Mono"
+                    :height 110
+                    :background "#282a36"
+                    :foreground "white"
+                    :box '(:line-width 4 :color "#282a36")
+                    :overline nil
+                    :underline nil)
 
 (set-fontset-font t 'symbol "Segoe UI Emoji" nil)
 (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
@@ -72,6 +88,7 @@
              (:eval (symbol-name buffer-file-coding-system))
              "] "
              mode-name
+             "  "
              ))))))
 
 (setq mode-line-format (default-value 'mode-line-format))
