@@ -44,11 +44,6 @@
                     :overline nil
                     :underline nil)
 
-; 😀 😃 😄 👋 🤚 🖐 ✋ 🖖 👌🧳 🌂 ☂️ 🧵 🧶 👓⚽️ 🏀 🏈 ⚾️ 🥎 🎾  🚕 🚙 🚌 🚎 🏎
-(setq use-default-font-for-symbols nil)
-(set-fontset-font t 'symbol "Noto Color Emoji" nil)
-(set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
-
 ;; show whitespace
 ;; (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
 ;;

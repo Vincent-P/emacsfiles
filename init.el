@@ -41,6 +41,14 @@ Arguments the same as in `compile'."
 
 ;; --- Emacs behaviour
 
+; 😀 😃 😄 👋 🤚 🖐 ✋ 🖖 👌🧳 🌂 ☂️ 🧵 🧶 👓⚽️ 🏀 🏈 ⚾️ 🥎 🎾  🚕 🚙 🚌 🚎 🏎
+(setq use-default-font-for-symbols nil)
+; Emoji: 😄, 🤦, 🏴󠁧󠁢󠁳󠁣󠁴󠁿
+(set-fontset-font t 'symbol "Apple Color Emoji")
+(set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
+(set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
+(set-fontset-font t 'symbol "Symbola" nil 'append)
+
 ;; Put custom settings in .custom dir
 (setq custom-file (expand-file-name ".custom" user-emacs-directory))
 (if (file-exists-p custom-file)
