@@ -60,8 +60,8 @@ Arguments the same as in `compile'."
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
 (set-face-attribute 'mode-line nil :family "Noto Sans" :height 120)
-(set-fontset-font t 'symbol "Noto Color Emoji" nil)
-(set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
+(set-fontset-font t 'symbol "Segoe UI Emoji" nil)
+(set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
 
 ;; show whitespace
 ;; (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
@@ -290,12 +290,6 @@ Arguments the same as in `compile'."
   (setq minions-mode-line-lighter "...")
   (setq minions-direct '(flycheck-mode)))
 
-(use-package moody
-  :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode))
-
 (let ((my_format '(
                   "%e"
                   mode-line-front-space
@@ -303,14 +297,11 @@ Arguments the same as in `compile'."
                   " "
                   (eyebrowse-mode (:eval (eyebrowse-mode-line-indicator)))
                   " "
-
-                  (:eval (moody-tab (format-mode-line (propertized-buffer-identification (if (buffer-modified-p) "⭐️ %b" "%b"))) 20 'down))
-
+                  (:eval (if (buffer-modified-p) "⭐️ %b" "%b") 20 'down)
                   " "
                   "%02l:%02c" ;; line and column
                   " "
-
-                  (vc-mode moody-vc-mode)
+                  (vc-mode vc-mode)
                   "  "
                   (:eval "%m")
                   minions-mode-line-modes
@@ -329,7 +320,7 @@ Arguments the same as in `compile'."
      (setq modus-%1$s-theme-slanted-constructs t
            modus-%1$s-theme-bold-constructs t
            modus-%1$s-theme-fringes 'subtle ; {nil,'subtle,'intense}
-           modus-%1$s-theme-mode-line 'moody ; {nil,'3d,'moody}
+           modus-%1$s-theme-mode-line 'nil ; {nil,'3d,'moody}
            modus-%1$s-theme-syntax 'alt-syntax ; {nil,faint,'yellow-comments,'green-strings,'yellow-comments-green-strings,'alt-syntax,'alt-syntax-yellow-comments}
            modus-%1$s-theme-intense-hl-line nil
            modus-%1$s-theme-intense-paren-match nil
