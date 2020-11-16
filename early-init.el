@@ -61,3 +61,14 @@
 (setq mode-line-format (default-value 'mode-line-format))
 
 ;; ---
+
+
+;; --- package
+(require 'package)
+
+(setq ackage-enable-at-startup nil)
+(setq package-archives
+                        '(("org" . "\`https://orgmode.org/elpa/``")
+                          ("melpa" . "https://melpa.org/packages/")
+                          ("gnu" . "https://elpa.gnu.org/packages/")))
+;; ---

@@ -70,27 +70,15 @@ Arguments the same as in `compile'."
 
 
 ;; --- use-package initialization
-
-(require 'package)
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                       ("melpa" . "https://melpa.org/packages/")))
-(package-initialize)
-(setq package-enable-at-startup nil)
-
-(when (not package-archive-contents)
-  (package-refresh-contents))
 (unless (package-installed-p 'use-package)
-  (message "`use-package' not found.  Installing...")
+  (package-refresh-contents)
   (package-install 'use-package))
-
+(package-initialize)
 (require 'use-package)
-(setq use-package-minimum-reported-time 0
-      use-package-verbose t
-      use-package-compute-statistics t)
 
 (setq use-package-always-ensure t)
-
 ;; ---
+
 
 ;; --- Packages
 
