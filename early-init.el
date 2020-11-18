@@ -20,6 +20,7 @@
 ;; fonts
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
 (custom-set-variables '(modus-vivendi-theme-syntax 'alt-syntax))
+(custom-set-variables '(modus-vivendi-theme-intense-hl-line t))
 (load-theme 'modus-vivendi t)
 
 (set-face-attribute 'default nil :family "Cascadia Code" :height 110)

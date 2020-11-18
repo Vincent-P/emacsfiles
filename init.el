@@ -84,7 +84,8 @@ Arguments the same as in `compile'."
 (package-initialize)
 (require 'use-package)
 
-(setq use-package-always-ensure t)
+(setq use-package-always-ensure t
+      use-package-verbose t)
 ;; ---
 
 
