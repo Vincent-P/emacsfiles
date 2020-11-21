@@ -49,6 +49,8 @@ Arguments the same as in `compile'."
 (set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
 (set-fontset-font t 'symbol "Symbola" nil 'append)
 
+(set-cursor-color "#ffffff")
+
 ;; Put custom settings in .custom dir
 (setq custom-file (expand-file-name ".custom" user-emacs-directory))
 (if (file-exists-p custom-file)
