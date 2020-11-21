@@ -22,6 +22,7 @@
 (custom-set-variables '(modus-vivendi-theme-syntax 'alt-syntax))
 (custom-set-variables '(modus-vivendi-theme-intense-hl-line t))
 (load-theme 'modus-vivendi t)
+(set-cursor-color "#ffffff")
 
 (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
