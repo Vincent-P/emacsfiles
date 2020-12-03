@@ -261,7 +261,7 @@ Arguments the same as in `compile'."
 (when (eq system-type 'windows-nt)
   (setenv "PATH"
           (concat
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.27.29110\\bin\\HostX64\\x64"
+           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\bin\\HostX64\\x64"
            path-separator
            "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\VC\\VCPackages"
            path-separator
@@ -297,7 +297,7 @@ Arguments the same as in `compile'."
 
   (setenv "INCLUDE"
           (concat
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.27.29110\\include"
+           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\include"
            path-separator
            "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\include\\um"
            path-separator
@@ -314,7 +314,7 @@ Arguments the same as in `compile'."
 
   (setenv "LIB"
           (concat
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.27.29110\\lib\\x64"
+           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\lib\\x64"
            path-separator
            "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\lib\\um\\x64"
            path-separator
@@ -325,9 +325,9 @@ Arguments the same as in `compile'."
 
   (setenv "LIBPATH"
           (concat
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.27.29110\\lib\\x64"
+           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\lib\\x64"
            path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.27.29110\\lib\\x86\\store\\references"
+           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\lib\\x86\\store\\references"
            path-separator
            "C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.18362.0"
            path-separator
