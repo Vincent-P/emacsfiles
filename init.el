@@ -141,6 +141,8 @@ Arguments the same as in `compile'."
 (use-package evil-surround
   :after evil
   :init
+  (add-hook 'c++-mode-hook (lambda ()
+                             (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
   (evil-define-key 'operator global-map "s" 'evil-surround-edit)
   (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
   (evil-define-key 'visual global-map "S" 'evil-surround-region)
