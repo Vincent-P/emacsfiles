@@ -23,12 +23,12 @@
 (custom-set-variables '(modus-vivendi-theme-intense-hl-line t))
 (load-theme 'modus-vivendi t)
 
-(set-face-attribute 'default nil :family "Cascadia Code" :height 110)
-(set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
-(set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 110)
+(set-face-attribute 'default nil :family "JetBrains Mono" :height 120)
+(set-face-attribute 'fixed-pitch nil :family "JetBrains Mono" :height 120)
+(set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
 
 (set-face-attribute 'mode-line nil
-                    :family "Noto Sans Mono"
+                    :family "JetBrains Mono"
                     :height 110
                     :background "grey20"
                     :foreground "white"
@@ -37,7 +37,7 @@
                     :underline nil)
 
 (set-face-attribute 'mode-line-inactive nil
-                    :family "Noto Sans Mono"
+                    :family "JetBrains Mono"
                     :height 110
                     :background "black"
                     :foreground "white"
@@ -58,39 +58,102 @@
 ;;
 ;; (global-whitespace-mode)
 
-(defun simple-mode-line-render (left right)
-  "Return a string of `window-width' length.
-   Containing LEFT, and RIGHT aligned respectively."
-  (let ((available-width
-         (- (window-total-width)
-            (+ (length (format-mode-line left))
-               (length (format-mode-line right))))))
-    (append left
-            (list (format (format "%%%ds" available-width) ""))
-            right)))
+(defvar my-mode-line-project-root
+  '(:propertize
+    (:eval (when (project-current nil) (concat (directory-file-name (project-root (project-current nil))) "/")))
+    face mode-line-emphasis))
 
-(setq-default
- mode-line-format
- '((:eval
-    (simple-mode-line-render
-     ;; Left.
-     (quote (" "
-             (eyebrowse-mode (:eval (eyebrowse-mode-line-indicator)))
-             evil-mode-line-tag
-             "%*"
-             mode-line-buffer-identification
-             " %02l:%02c "
-             ))
-     ;; Right.
-     (quote (""
-             " ["
-             (:eval (symbol-name buffer-file-coding-system))
-             "] "
-             mode-name
-             "  "
-             ))))))
+(defvar my-mode-line-selection
+  '(:propertize
+    (:eval (when (use-region-p) (concat (number-to-string (count-lines (region-beginning) (region-end))) " line(s)")))
+    face mode-line-emphasis))
 
-(setq mode-line-format (default-value 'mode-line-format))
+(put 'my-mode-line-project-root 'risky-local-variable t)
+(put 'my-mode-line-selection 'risky-local-variable t)
+
+(setq-default mode-line-position
+              '((line-number-mode ("%04l" (column-number-mode ":%02c")))))
+
+(setq mode-line-align-left
+      '(" "
+        (eyebrowse-mode (:eval (eyebrowse-mode-line-indicator)))
+        (:eval evil-mode-line-tag)
+        my-mode-line-project-root
+        mode-line-buffer-identification
+        "%*"
+        " "
+        mode-line-position
+        "  "
+        my-mode-line-selection
+        ))
+
+(setq mode-line-align-middle
+      '(""
+        ))
+
+(setq mode-line-align-right
+      '(""
+        (:eval (symbol-name buffer-file-coding-system))
+        " "
+        mode-name))
+
+;; = (https://emacs.stackexchange.com/questions/16654/how-to-re-arrange-things-in-mode-line) =================================
+;; DONT CHANGE BELOW
+
+(defun mode-line-fill-right (face reserve)
+  "Return empty space using FACE and leaving RESERVE space on the right."
+  (unless reserve
+    (setq reserve 20))
+  (when (and window-system (eq 'right (get-scroll-bar-mode)))
+    (setq reserve (- reserve 3)))
+  (propertize " "
+              'display `((space :align-to (- (+ right right-fringe right-margin) ,reserve)))
+              'face face))
+
+
+(defun mode-line-fill-center (face reserve)
+  "Return empty space using FACE to the center of remaining space leaving RESERVE space on the right."
+  (unless reserve
+    (setq reserve 20))
+  (when (and window-system (eq 'right (get-scroll-bar-mode)))
+    (setq reserve (- reserve 3)))
+  (propertize " "
+              'display `((space :align-to (- (+ center (.5 . right-margin)) ,reserve
+                                             (.5 . left-margin))))
+              'face face))
+
+
+
+
+(defconst RIGHT_PADDING 1)
+
+(defun reserve-left/middle ()
+  (/ (length (format-mode-line mode-line-align-middle)) 2))
+
+(defun reserve-middle/right ()
+  (+ RIGHT_PADDING (length (format-mode-line mode-line-align-right))))
+
+(setq-default mode-line-format
+              (list
+               mode-line-align-left
+               '(:eval (mode-line-fill-center nil (reserve-left/middle)))
+               mode-line-align-middle
+               '(:eval (mode-line-fill-right nil (reserve-middle/right)))
+               mode-line-align-right
+               ))
+
+(setq mode-line-format
+      (list
+       mode-line-align-left
+       '(:eval (mode-line-fill-center nil (reserve-left/middle)))
+       mode-line-align-middle
+       '(:eval (mode-line-fill-right nil (reserve-middle/right)))
+       mode-line-align-right
+       ))
+
+;; ===========================================================================================================================
+
+
 ;; ---
 
 
