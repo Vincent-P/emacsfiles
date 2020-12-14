@@ -156,7 +156,7 @@ Arguments the same as in `compile'."
 ;; "Fuzzy" searching for selectrum and company
 (use-package prescient
   :custom
-  (prescient-filter-method '(literal regexp initialism fuzzy)))
+  (prescient-filter-method '(literal fuzzy)))
 
 (use-package company-prescient
   :after company
@@ -178,6 +178,7 @@ Arguments the same as in `compile'."
 ;; git integration
 (use-package magit)
 
+;; vim bindings for magit
 (use-package evil-magit
   :after magit
   :init
@@ -212,7 +213,12 @@ Arguments the same as in `compile'."
   (setq company-show-numbers t)
   (setq company-tooltip-align-annotations 't)
   (setq global-company-mode t)
-  (setq company-backends '(company-capf)))
+  (setq company-backends '(company-capf))
+  (add-hook 'emacs-lisp-mode-hook
+            '(lambda ()
+               (require 'company-elisp)
+               (push 'company-elisp company-backends)
+               (company-mode))))
 
 ;; tree-sitter based syntax highlighting
 (use-package tree-sitter
@@ -247,13 +253,6 @@ Arguments the same as in `compile'."
 (use-package rainbow-delimiters
   :config
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
-
-;; modeline theme
-(use-package minions
-  :init (minions-mode)
-  :config
-  (setq minions-mode-line-lighter "...")
-  (setq minions-direct '(flycheck-mode)))
 
 ;; ---
 
@@ -339,8 +338,9 @@ Arguments the same as in `compile'."
 
 (require 'cc-mode)
 
+;; GLSL major mode
 (use-package glsl-mode
-  :mode "\\.\\(vert\\|frag\\)\\'")
+  :mode "\\.\\(vert\\|frag\\|comp\\|geom\\)\\'")
 
 ;; Specify files to search for `ff-other-file`
 (setq cc-search-directories '("."
