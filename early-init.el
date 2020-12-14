@@ -13,6 +13,8 @@
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
 
+(setq custom-raised-buttons nil)
+
 ;; remove borders
 (setq-default left-fringe-width 1)
 (setq-default right-fringe-width 1)
@@ -21,29 +23,15 @@
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
 (custom-set-variables '(modus-vivendi-theme-syntax 'alt-syntax))
 (custom-set-variables '(modus-vivendi-theme-intense-hl-line t))
-(load-theme 'modus-vivendi t)
+
+(load-theme 'mon-theme t)
 
 (set-face-attribute 'default nil :family "JetBrains Mono" :height 120)
 (set-face-attribute 'fixed-pitch nil :family "JetBrains Mono" :height 120)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
 
-(set-face-attribute 'mode-line nil
-                    :family "JetBrains Mono"
-                    :height 110
-                    :background "grey20"
-                    :foreground "white"
-                    :box '(:line-width 4 :color "grey20")
-                    :overline nil
-                    :underline nil)
-
-(set-face-attribute 'mode-line-inactive nil
-                    :family "JetBrains Mono"
-                    :height 110
-                    :background "black"
-                    :foreground "white"
-                    :box '(:line-width 4 :color "black")
-                    :overline nil
-                    :underline nil)
+(set-face-attribute 'mode-line nil :family "JetBrains Mono" :height 110)
+(set-face-attribute 'mode-line-inactive nil :family "JetBrains Mono" :height 110)
 
 ;; show whitespace
 ;; (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
