@@ -14,12 +14,12 @@
       (fg2 "dim gray")
       (bg_base "black")
       (bg_region "gray15")
-      (hl_fg "gray20")
+      (hl_bg "gray20")
       (hl_bold "gray25")
       (str_fg "LightGoldenrod1")
       (str_bg "#332f1c")
-      (blue0 "#66afcc")
-      (blue1 "#7ca6b6")
+      (blue0 "#52beff")
+      (blue1 "#66afcc")
       (constant_fg "LightGoldenrod1")
       (type_fg "#52beff")
       )
@@ -27,6 +27,8 @@
   ;; Set faces
   (custom-theme-set-faces
    'mon-theme ;; you must use the same theme name here...
+
+   ;; --- Default Emacs GUI faces
    `(default ((t (:foreground ,fg_base :background ,bg_base))))
    `(cursor  ((t (:background ,fg_base))))
    `(fringe  ((t (:background ,bg_base))))
@@ -47,8 +49,11 @@
    `(custom-button-pressed_unraised ((t (:inherit custom-button))))
    `(custom-button-unraised ((t (:inherit custom-button))))
 
-   `(highlight  ((t (:background ,hl_fg))))
-   `(lazy-highlight  ((t (:background ,hl_fg :underline t))))
+   `(highlight  ((t (:background ,hl_bg))))
+   `(lazy-highlight  ((t (:background ,hl_bg :underline t))))
+
+   ;; --- Programming faces
+
    `(region  ((t (:background ,bg_region))))
 
    ;; Basic emacs programming faces
@@ -60,8 +65,6 @@
    `(font-lock-constant-face ((t (:foreground ,constant_fg))))
    `(font-lock-type-face ((t (:foreground ,type_fg))))
    `(font-lock-string-face ((t (:foreground ,str_fg :background ,str_bg))))
-
-
 
    `(font-lock-builtin-face ((t (:foreground ,fg_base))))
    `(font-lock-function-name-face ((t (:foreground ,fg_base))))
@@ -89,6 +92,15 @@
 
    `(tree-sitter-hl-face:function.call ((t ())))
 
+   ;; --- Company faces
+   `(company-scrollbar-fg ((t (:background ,fg_base))))
+   `(company-scrollbar-bg ((t (:background ,hl_bg))))
+   `(company-tooltip ((t (:foreground ,fg_base :background ,bg_base))))
+   `(company-tooltip-common ((t (:foreground ,fg_base :underline t))))
+   `(company-tooltip-selection ((t (:background ,hl_bg))))
+   `(company-preview ((t (:background ,hl_bg))))
+   `(company-preview-common ((t (:background ,hl_bg :underline t))))
+   `(company-preview-search ((t (:inherit company-preview-common))))
    )
 
   (custom-theme-set-variables
