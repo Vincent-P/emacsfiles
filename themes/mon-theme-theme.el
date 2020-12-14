@@ -56,6 +56,13 @@
 
    `(region  ((t (:background ,bg_region))))
 
+   ;; Errors
+   `(flycheck-error ((t (:underline (:color "indian red" :style line)))))
+   `(flyspell-incorrect ((t (:underline (:color "indian red" :style line)))))
+   `(flycheck-warning ((t (:underline (:color "coral" :style line)))))
+   `(flyspell-duplicate ((t (:underline (:color "coral" :style line)))))
+   `(flycheck-info ((t (:underline `(:color ,fg_base :style line)))))
+
    ;; Basic emacs programming faces
    `(font-lock-doc-face ((t (:foreground ,fg2 :weight bold :slant italic))))
    `(font-lock-comment-delimiter-face ((t (:foreground ,fg2))))

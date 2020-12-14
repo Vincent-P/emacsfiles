@@ -202,7 +202,11 @@ Arguments the same as in `compile'."
   (yas-global-mode 1))
 
 ;; Error reporting
-(use-package flycheck)
+(use-package flycheck
+  :config
+  (define-fringe-bitmap 'circle-bmp "\x3c\x7e\xff\xff\xff\xff\x7e\x3c")
+  (flycheck-redefine-standard-error-levels nil 'circle-bmp)
+  )
 
 ;; completion package
 (use-package company

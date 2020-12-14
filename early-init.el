@@ -16,7 +16,8 @@
 (setq custom-raised-buttons nil)
 
 ;; remove borders
-(setq-default left-fringe-width 1)
+(setq-default left-fringe-width 16)
+(setq left-fringe-width 16)
 (setq-default right-fringe-width 1)
 
 ;; fonts
