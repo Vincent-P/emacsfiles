@@ -5,28 +5,30 @@
 ;;;
 ;;; Code:
 
-(deftheme mon-theme
+
+(deftheme mon-theme-light
   "My Ideal theme.")
 
-(let ((fg_base "white")
+(let ((fg_base "black")
       (fg2 "dim gray")
-      (bg_base "black")
-      (bg_region "gray15")
-      (hl_bg "gray20")
-      (str_fg "LightGoldenrod1")
-      (str_bg "#332f1c")
-      (blue0 "#52beff")
-      (blue1 "#66afcc")
-      (constant_fg "LightGoldenrod1")
-      (type_fg "#52beff")
+      (bg_base "white")
+      (bg_region "gray95")
+      (hl_bg "gray90")
+      (str_fg "dark goldenrod")
+      (str_bg "light goldenrod yellow")
+      (blue0 "#0069a8")
+      (blue1 "#265d73")
+      (constant_fg "dark goldenrod")
+      (type_fg "#0069a8")
       (error_color "indian red")
       (warning_color "coral")
-      (info_color "white")
+      (info_color "black")
+      (search_bg "#52beff")
       )
 
   ;; Set faces
   (custom-theme-set-faces
-   'mon-theme ;; you must use the same theme name here...
+   'mon-theme-light ;; you must use the same theme name here...
 
    ;; --- Default Emacs GUI faces
    `(default ((t (:foreground ,fg_base :background ,bg_base))))
@@ -51,6 +53,7 @@
 
    `(highlight  ((t (:background ,hl_bg))))
    `(lazy-highlight  ((t (:background ,hl_bg :underline t))))
+   `(isearch ((t (:background ,search_bg))))
 
    ;; --- Programming faces
 
@@ -67,6 +70,7 @@
 
    `(flycheck-info ((t (:underline (:color ,info_color :style line)))))
    `(flycheck-fringe-info ((t (:foreground ,info_color))))
+
 
    ;; Basic emacs programming faces
    `(font-lock-doc-face ((t (:foreground ,fg2 :weight bold :slant italic))))
@@ -115,11 +119,30 @@
    `(company-preview-search ((t (:inherit company-preview-common))))
 
    ;; --- Rainbow delimiters, more satured colors
+   `(rainbow-delimiters-base-error-face ((t (:foreground "indian red" :underline `(:color ,error_color :style line)))))
+   `(rainbow-delimiters-base-face ((t ())))
+   `(rainbow-delimiters-depth-1-face ((t (:foreground "#4b50a8"))))
+   `(rainbow-delimiters-depth-2-face ((t (:foreground "#5c7bed"))))
+   `(rainbow-delimiters-depth-3-face ((t (:foreground "#b8c054"))))
+   `(rainbow-delimiters-depth-4-face ((t (:foreground "#3fc93f"))))
+   `(rainbow-delimiters-depth-5-face ((t (:foreground "#c34040"))))
+   `(rainbow-delimiters-depth-6-face ((t (:foreground "#2957f3"))))
+   `(rainbow-delimiters-depth-7-face ((t (:foreground "#b7b74e"))))
+   `(rainbow-delimiters-depth-8-face ((t (:foreground "#55d355"))))
+   `(rainbow-delimiters-depth-9-face ((t (:foreground "#ba3e3e"))))
+
+   ;; --- Org
+   `(org-document-title ((t (:foreground ,fg_base :height 2.0))))
+   `(outline-1 ((t (:foreground ,fg_base :height 1.20 :underline t))))
+   `(outline-2 ((t (:foreground ,fg_base :height 1.15 :underline t))))
+   `(outline-3 ((t (:foreground ,fg_base :height 1.10 :underline t))))
+
+   `(org-list-dt ((t (:foreground ,fg_base :slant italic :weight normal))))
    )
 
   (custom-theme-set-variables
-   'mon-theme))
+   'mon-theme-light))
 
-(provide-theme 'mon-theme)
+(provide-theme 'mon-theme-light)
 
-;;; mon-theme-theme.el ends here
+;;; mon-theme-light-theme.el ends here
