@@ -262,6 +262,82 @@ Arguments the same as in `compile'."
   :config
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
+
+; https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321/19
+(add-hook 'org-mode-hook (lambda ()
+                           (setq-local time-stamp-active t
+                                       time-stamp-start "#\\+LAST_MODIFIED:[ \t]*"
+                                       time-stamp-end "$"
+                                       time-stamp-format "\[%Y-%02m-%02d %3a %02H:%02M\]")
+                           (add-hook 'before-save-hook 'time-stamp nil 'local)))
+
+; https://stackoverflow.com/questions/17590784/how-to-let-org-mode-open-a-link-like-file-file-org-in-current-window-inste
+(defun org-force-open-current-window ()
+  (interactive)
+  (let ((org-link-frame-setup (quote
+                               ((vm . vm-visit-folder)
+                                (vm-imap . vm-visit-imap-folder)
+                                (gnus . gnus)
+                                (file . find-file)
+                                (wl . wl)))
+                              ))
+    (org-open-at-point)))
+;; Depending on universal argument try opening link
+(defun org-open-maybe (&optional arg)
+  (interactive "P")
+  (if arg
+      (org-open-at-point)
+    (org-force-open-current-window)
+    )
+  )
+
+(use-package org
+  :hook ((org-mode . org-indent-mode)
+         (org-mode . visual-line-mode))
+  :config
+  ;; Redefine file opening without clobbering universal argumnet
+  (define-key org-mode-map "\C-c\C-o" 'org-open-maybe)
+  )
+
+(use-package evil-org
+  :after org
+  :config
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (evil-org-set-key-theme)))
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
+;; Link notes and display graph
+(use-package org-roam
+  :after org
+  :hook
+  (after-init . org-roam-mode)
+  :config
+  (setq org-roam-directory "~/org/roam/")
+  (setq org-roam-capture-templates
+        '(("d" "default" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "${slug}"
+           :head "#+TITLE: ${title} \n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n\n- tags :: "
+           :unnarrowed t)))
+  )
+
+(use-package company-org-roam
+  :after (company org-roam)
+  :config
+  (push 'company-org-roam company-backends))
+
+(use-package deft
+  :after org
+  :config
+  (setq deft-recursive t
+        deft-use-filter-string-for-filename t
+        deft-default-extension "org"
+        deft-directory "~/org/roam/"))
+
+(use-package pandoc-mode)
 ;; ---
 
 ;; --- Programming languages
@@ -440,6 +516,17 @@ Arguments the same as in `compile'."
    ;; Applications
    "a"   '(:ignore t :which-key "Applications")
    "ad"  'dired
+
+   ;; Org
+   "n" '(:ignore t :which-key "Notes")
+   "nl" '(org-roam :which-key "Org Roam")
+   "nf" '(org-roam-find-file :which-key "Roam: find file")
+   "nb" '(org-roam-switch-buffer :which-key "Roam: switch buffer")
+   "ng" '(org-roam-graph :which-key "Roam: graph")
+   "ni" '(org-roam-insert :which-key "Roam: insert")
+   "nI" '(org-roam-insert-immediate :which-key "Roam: insert immediate")
+   "nc" '(org-roam-capture :which-key "Roam: capture")
+   "nd" '(deft :which-key "navigate")
    )
   )
 
