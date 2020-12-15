@@ -38,17 +38,16 @@
 (set-face-attribute 'mode-line-inactive nil :family "JetBrains Mono" :height 110)
 
 ;; show whitespace
-;; (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
-;;
-;; (setq whitespace-display-mappings
-;;       '(
-;;         (space-mark 32 [183] [46]) ; 183 middle dot
-;;         (newline-mark 10 [172 10]) ; 172 ¬ not sign
-;;         (tab-mark 9 [187 9] [92 9]) ; tab
-;; ))
-;;
-;;
-;; (global-whitespace-mode)
+(setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
+
+(setq whitespace-display-mappings
+      '(
+        (space-mark 32 [183] [46]) ; 183 middle dot
+        (newline-mark 10 [172 10]) ; 172 ¬ not sign
+        (tab-mark 9 [187 9] [92 9]) ; tab
+))
+
+(add-hook 'prog-mode-hook 'whitespace-mode)
 
 (defvar my-mode-line-project-root
   '(:propertize

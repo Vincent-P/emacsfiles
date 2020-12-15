@@ -9,22 +9,39 @@
 (deftheme mon-theme-light
   "My Ideal theme.")
 
-(let ((fg_base "black")
-      (fg2 "dim gray")
-      (bg_base "white")
-      (bg_region "gray95")
-      (hl_bg "gray90")
-      (str_fg "dark goldenrod")
-      (str_bg "light goldenrod yellow")
-      (blue0 "#0069a8")
-      (blue1 "#265d73")
-      (constant_fg "dark goldenrod")
-      (type_fg "#0069a8")
-      (error_color "indian red")
-      (warning_color "coral")
-      (info_color "black")
-      (search_bg "#52beff")
-      )
+(let* (
+       (fg_base "black")
+       (fg_dim "dim gray")
+       (bg_0 "white")
+       (bg_1 "gray95")
+       (bg_2 "gray90")
+       (bg_3 "gray85")
+       (yellow_0 "dark goldenrod")
+       (yellow_1 "light goldenrod yellow")
+       (blue_0 "#0069a8")
+       (blue_1 "#265d73")
+       (blue_2 "#52beff")
+       (red_0 "firebrick")
+       (red_1 "todo")
+       (orange_0 "coral")
+       (red_1 "todo")
+
+       (bg_base bg_0)
+       (region_bg bg_1)
+       (hl_bg bg_2)
+       (str_fg yellow_0)
+       (str_bg yellow_1)
+       (link_fg blue_0)
+       (link_visited_fg blue_1)
+       (constant_fg yellow_0)
+       (modeline_emphasis_fg blue_0)
+       (type_fg blue_0)
+       (error_color red_0)
+       (warning_color orange_0)
+       (info_color fg_base)
+       (search_bg blue_2)
+       (whitespace_fg bg_3)
+       )
 
   ;; Set faces
   (custom-theme-set-faces
@@ -32,17 +49,17 @@
 
    ;; --- Default Emacs GUI faces
    `(default ((t (:foreground ,fg_base :background ,bg_base))))
-   `(cursor  ((t (:background ,fg2))))
+   `(cursor  ((t (:background ,fg_dim))))
    `(fringe  ((t (:background ,bg_base))))
 
-   `(mode-line ((t (:foreground ,fg_base :box ,`(:line-width 1 :color ,fg2)))))
-   `(mode-line-inactive ((t (:foreground ,fg2 :box ,`(:line-width 1 :color ,fg2)))))
-   `(mode-line-emphasis ((t (:foreground ,constant_fg))))
+   `(mode-line ((t (:foreground ,fg_base :box ,`(:line-width 1 :color ,fg_dim)))))
+   `(mode-line-inactive ((t (:foreground ,fg_dim :box ,`(:line-width 1 :color ,fg_dim)))))
+   `(mode-line-emphasis ((t (:foreground ,modeline_emphasis_fg))))
 
    `(minibuffer-prompt  ((t (:foreground ,fg_base :weight bold))))
 
-   `(link  ((t (:foreground ,blue0 :underline t :background nil))))
-   `(link-visited  ((t (:foreground ,blue1))))
+   `(link  ((t (:foreground ,link_fg :underline t :background nil))))
+   `(link-visited  ((t (:foreground ,link_visited_fg))))
    `(button ((t (:background nil))))
 
    `(custom-button ((t (:box t))))
@@ -57,7 +74,9 @@
 
    ;; --- Programming faces
 
-   `(region  ((t (:background ,bg_region))))
+   `(region  ((t (:background ,region_bg))))
+   `(whitespace-space ((t (:foreground ,whitespace_fg))))
+   `(whitespace-newline ((t (:inherit whitespace-space))))
 
    ;; Errors
    `(flycheck-error ((t (:underline (:color ,error_color :style line)))))
@@ -73,9 +92,9 @@
 
 
    ;; Basic emacs programming faces
-   `(font-lock-doc-face ((t (:foreground ,fg2 :weight bold :slant italic))))
-   `(font-lock-comment-delimiter-face ((t (:foreground ,fg2))))
-   `(font-lock-comment-face ((t (:foreground ,fg2))))
+   `(font-lock-doc-face ((t (:foreground ,fg_dim :weight bold :slant italic))))
+   `(font-lock-comment-delimiter-face ((t (:foreground ,fg_dim))))
+   `(font-lock-comment-face ((t (:foreground ,fg_dim))))
 
    `(font-lock-keyword-face ((t (:foreground ,fg_base :weight bold))))
    `(font-lock-constant-face ((t (:foreground ,constant_fg))))
@@ -133,7 +152,7 @@
 
    ;; --- Org
    `(org-document-title ((t (:foreground ,fg_base :height 2.0))))
-   `(outline-1 ((t (:foreground ,fg_base :height 1.20 :underline t))))
+   `(outline-1 ((t (:foreground ,fg_base :height 1.20 :underline t :extend t))))
    `(outline-2 ((t (:foreground ,fg_base :height 1.15 :underline t))))
    `(outline-3 ((t (:foreground ,fg_base :height 1.10 :underline t))))
 
