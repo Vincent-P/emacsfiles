@@ -8,6 +8,12 @@
 (defadvice load-theme (before disable-themes-first activate)
   (disable-all-themes))
 
+(defun toggle-dark-light-theme ()
+  "toggles between dark and light theme."
+  (interactive (if (eq current-theme 'mon-theme)
+      (progn (load-theme 'mon-theme-light t) (setq current-theme 'mon-theme-light))
+    (progn (load-theme 'mon-theme t) (setq current-theme 'mon-theme)))))
+
 (defun project-build (command &optional comint)
   "Run `compile' in the ${project root}/build directory.
 Arguments the same as in `compile'."
@@ -48,8 +54,6 @@ Arguments the same as in `compile'."
 (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
 (set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
 (set-fontset-font t 'symbol "Symbola" nil 'append)
-
-(set-cursor-color "#ffffff")
 
 ;; Put custom settings in .custom dir
 (setq custom-file (expand-file-name ".custom" user-emacs-directory))
@@ -431,7 +435,7 @@ Arguments the same as in `compile'."
 
    ;; Theme
    "t" '(:ignore t :which-key "Themes")
-   ; "tt" '(modus-themes-toggle :which-key "toggle")
+   "tt" '(toggle-dark-light-theme :which-key "toggle")
 
    ;; Applications
    "a"   '(:ignore t :which-key "Applications")

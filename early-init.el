@@ -13,7 +13,8 @@
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
 
-(setq custom-raised-buttons nil)
+;; set underline lower
+(setq x-underline-at-descent-line t)
 
 ;; remove borders
 (setq-default left-fringe-width 16)
@@ -25,11 +26,13 @@
 (custom-set-variables '(modus-vivendi-theme-syntax 'alt-syntax))
 (custom-set-variables '(modus-vivendi-theme-intense-hl-line t))
 
-(load-theme 'mon-theme t)
+(defvar current-theme 'mon-theme-light "Current theme.")
+(load-theme current-theme t)
 
 (set-face-attribute 'default nil :family "JetBrains Mono" :height 120)
 (set-face-attribute 'fixed-pitch nil :family "JetBrains Mono" :height 120)
-(set-face-attribute 'variable-pitch nil :family "Noto Sans" :height 120)
+(set-face-attribute 'variable-pitch nil :family "ia Writer Quattro S" :height 120)
+(add-hook 'text-mode-hook 'variable-pitch-mode)
 
 (set-face-attribute 'mode-line nil :family "JetBrains Mono" :height 110)
 (set-face-attribute 'mode-line-inactive nil :family "JetBrains Mono" :height 110)
