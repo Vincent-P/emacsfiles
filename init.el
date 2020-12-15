@@ -292,6 +292,7 @@ Arguments the same as in `compile'."
   )
 
 (use-package org
+  :ensure org-plus-contrib :pin org
   :hook ((org-mode . org-indent-mode)
          (org-mode . visual-line-mode))
   :config
@@ -301,7 +302,6 @@ Arguments the same as in `compile'."
   )
 
 (use-package evil-org
-  :after org
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
   (add-hook 'evil-org-mode-hook
@@ -312,7 +312,6 @@ Arguments the same as in `compile'."
 
 ;; Link notes and display graph
 (use-package org-roam
-  :after org
   :hook
   (after-init . org-roam-mode)
   :config
@@ -325,13 +324,14 @@ Arguments the same as in `compile'."
            :unnarrowed t)))
   )
 
+(require 'org-protocol)
+(require 'org-roam-protocol)
+
 (use-package company-org-roam
-  :after (company org-roam)
   :config
   (push 'company-org-roam company-backends))
 
 (use-package deft
-  :after org
   :config
   (setq deft-recursive t
         deft-use-filter-string-for-filename t
@@ -339,6 +339,21 @@ Arguments the same as in `compile'."
         deft-directory "~/Dropbox/org/roam/"))
 
 (use-package pandoc-mode)
+
+(use-package org-roam-server
+  :config
+  (setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 8080
+        org-roam-server-authenticate nil
+        org-roam-server-export-inline-images t
+        org-roam-server-serve-files nil
+        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+        org-roam-server-network-poll t
+        org-roam-server-network-arrows nil
+        org-roam-server-network-label-truncate t
+        org-roam-server-network-label-truncate-length 60
+        org-roam-server-network-label-wrap-length 20))
+
 ;; ---
 
 ;; --- Programming languages
