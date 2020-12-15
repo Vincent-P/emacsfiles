@@ -297,6 +297,7 @@ Arguments the same as in `compile'."
   :config
   ;; Redefine file opening without clobbering universal argumnet
   (define-key org-mode-map "\C-c\C-o" 'org-open-maybe)
+  (add-hook 'auto-save-hook 'org-save-all-org-buffers)
   )
 
 (use-package evil-org
@@ -315,7 +316,7 @@ Arguments the same as in `compile'."
   :hook
   (after-init . org-roam-mode)
   :config
-  (setq org-roam-directory "~/org/roam/")
+  (setq org-roam-directory "~/Dropbox/org/roam/")
   (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam--capture-get-point)
            "%?"
@@ -335,7 +336,7 @@ Arguments the same as in `compile'."
   (setq deft-recursive t
         deft-use-filter-string-for-filename t
         deft-default-extension "org"
-        deft-directory "~/org/roam/"))
+        deft-directory "~/Dropbox/org/roam/"))
 
 (use-package pandoc-mode)
 ;; ---
