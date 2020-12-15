@@ -143,6 +143,15 @@
    `(outline-3 ((t (:foreground ,fg_base :height 1.10 :underline t))))
 
    `(org-list-dt ((t (:foreground ,fg_base :slant italic :weight normal))))
+
+   `(org-block ((t (:inherit fixed-pitch))))
+   `(org-table ((t (:inherit fixed-pitch))))
+   `(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+   `(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   `(org-property-value ((t (:inherit fixed-pitch))) t)
+   `(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   `(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+   `(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
    )
 
   (custom-theme-set-variables
