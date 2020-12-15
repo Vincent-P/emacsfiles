@@ -319,9 +319,15 @@ Arguments the same as in `compile'."
   (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "${slug}"
+           :file-name "%<%Y%m%d%H%M%S>-${slug}"
            :head "#+TITLE: ${title} \n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n\n- tags :: "
-           :unnarrowed t)))
+           :unnarrowed t))
+
+        org-roam-capture-ref-templates '(("r" "ref" plain (function org-roam--capture-get-point)
+                                          "%?"
+                                          :file-name "%<%Y%m%d%H%M%S>-${slug}"
+                                          :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n #+ROAM_KEY: ${ref}\n#+ROAM_ALIAS: \n\n- link :: [[${ref}]]\n- tags :: "
+                                          :unnarrowed t)))
   )
 
 (require 'org-protocol)
