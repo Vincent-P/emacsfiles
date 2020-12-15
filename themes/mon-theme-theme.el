@@ -51,9 +51,11 @@
    `(cursor  ((t (:background ,fg_dim))))
    `(fringe  ((t (:background ,bg_base))))
 
-   `(mode-line ((t (:foreground ,fg_base :box ,`(:line-width 1 :color ,fg_dim)))))
-   `(mode-line-inactive ((t (:foreground ,fg_dim :box ,`(:line-width 1 :color ,fg_dim)))))
-   `(mode-line-emphasis ((t (:foreground ,modeline_emphasis_fg))))
+   `(mode-line ((t (:inherit variable-pitch :foreground ,fg_base :box ,`(:line-width 1 :color ,fg_dim)))))
+   `(mode-line-inactive ((t (:inherit mode-line :foreground ,fg_dim))))
+   `(mode-line-emphasis ((t (:inherit mode-line :foreground ,modeline_emphasis_fg))))
+   `(mode-line-buffer-id ((t (:inherit mode-line :weight bold))))
+   `(mode-line-highlight ((t (:inherit mode-line))))
 
    `(minibuffer-prompt  ((t (:foreground ,fg_base :weight bold))))
 
@@ -70,6 +72,15 @@
    `(highlight  ((t (:background ,hl_bg))))
    `(lazy-highlight  ((t (:background ,hl_bg :underline t))))
    `(isearch ((t (:background ,search_bg))))
+
+   ;; --- Custom faces
+   `(my-evil-tag-face:normal ((t (:inherit variable-pitch :foreground ,fg_base))))
+   `(my-evil-tag-face:emacs ((t (:inherit my-eviltag-face:normal))))
+   `(my-evil-tag-face:insert ((t (:inherit my-eviltag-face:normal))))
+   `(my-evil-tag-face:replace ((t (:inherit my-eviltag-face:normal))))
+   `(my-evil-tag-face:motion ((t (:inherit my-eviltag-face:normal))))
+   `(my-evil-tag-face:visual ((t (:inherit my-eviltag-face:normal))))
+   `(my-evil-tag-face:operator ((t (:inherit my-eviltag-face:normal))))
 
    ;; --- Programming faces
 

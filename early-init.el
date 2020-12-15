@@ -32,10 +32,8 @@
 (set-face-attribute 'default nil :family "JetBrains Mono" :height 120)
 (set-face-attribute 'fixed-pitch nil :family "JetBrains Mono" :height 120)
 (set-face-attribute 'variable-pitch nil :family "ia Writer Quattro S" :height 120)
+(set-face-attribute 'mode-line nil :height 130)
 (add-hook 'text-mode-hook 'variable-pitch-mode)
-
-(set-face-attribute 'mode-line nil :family "JetBrains Mono" :height 110)
-(set-face-attribute 'mode-line-inactive nil :family "JetBrains Mono" :height 110)
 
 ;; show whitespace
 (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))
@@ -56,7 +54,7 @@
 
 (defvar my-mode-line-selection
   '(:propertize
-    (:eval (when (use-region-p) (concat (number-to-string (count-lines (region-beginning) (region-end))) " line(s)")))
+    (:eval (when (use-region-p) (concat (number-to-string (count-lines (region-beginning) (region-end))) "L")))
     face mode-line-emphasis))
 
 (put 'my-mode-line-project-root 'risky-local-variable t)
@@ -68,7 +66,9 @@
 (setq mode-line-align-left
       '(" "
         (eyebrowse-mode (:eval (eyebrowse-mode-line-indicator)))
+        " "
         (:eval evil-mode-line-tag)
+        " "
         my-mode-line-project-root
         mode-line-buffer-identification
         "%*"
