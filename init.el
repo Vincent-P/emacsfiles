@@ -472,8 +472,8 @@ Arguments the same as in `compile'."
 
 ;; display keybindings
 (use-package which-key
-  :diminish which-key-mode
   :config
+  (setq which-key-idle-delay 0.1)
   (add-hook 'after-init-hook 'which-key-mode))
 
 ;; set bindings
