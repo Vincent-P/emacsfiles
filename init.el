@@ -557,6 +557,7 @@ Arguments the same as in `compile'."
    "nI" '(org-roam-insert-immediate :which-key "Roam: insert immediate")
    "nc" '(org-roam-capture :which-key "Roam: capture")
    "nd" '(deft :which-key "navigate")
+   "nt" '(org-roam-dailies-find-today :which-key "Today")
    )
   )
 
