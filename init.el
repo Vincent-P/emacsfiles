@@ -191,11 +191,11 @@ Arguments the same as in `compile'."
 (use-package magit)
 
 ;; vim bindings for magit
-(use-package evil-magit
-  :after magit
-  :init
-  (setq evil-magit-state 'normal
-        evil-magit-use-z-for-folds t))
+;; (use-package evil-magit
+;;  :after magit
+;;  :init
+;;  (setq evil-magit-state 'normal
+;;        evil-magit-use-z-for-folds t))
 
 ;; LSP support
 (use-package lsp-mode
@@ -237,12 +237,12 @@ Arguments the same as in `compile'."
                (company-mode))))
 
 ;; tree-sitter based syntax highlighting
-(use-package tree-sitter
-  :init
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; (use-package tree-sitter
+;;   :init
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-(use-package tree-sitter-langs)
+;; (use-package tree-sitter-langs)
 
 ;; (use-package ligature
 ;;   :load-path "elisp/ligature/"
