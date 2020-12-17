@@ -373,7 +373,7 @@ Arguments the same as in `compile'."
 ;; --- Programming languages
 
 ;; Setup msvc toolchain
-(when (eq system-type 'windows-nt)
+(when (and nil (eq system-type 'windows-nt))
   (setenv "PATH"
           (concat
            "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\bin\\HostX64\\x64"
