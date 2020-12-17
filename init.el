@@ -197,16 +197,13 @@ Arguments the same as in `compile'."
 ;;  (setq evil-magit-state 'normal
 ;;        evil-magit-use-z-for-folds t))
 
-;; LSP support
-(use-package lsp-mode
-  :hook (prog-mode . lsp)
-  :init
-  (setq lsp-prefer-flymake nil)
-  (setq lsp-prefer-capf t)
-  (setq lsp-clients-clangd-args '("-cross-file-rename"))
+
+(use-package eglot
   :config
-  (setq lsp-idle-delay 0.500)
-  )
+  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode-hook 'eglot-ensure))
+
 
 ;; Snippets system (to have better autocompletion from lsp servers that support snippets)
 (use-package yasnippet
@@ -488,8 +485,8 @@ Arguments the same as in `compile'."
   (general-define-key
    :states '(normal visual emacs)
    ;; LSP
-   "gr"  '(lsp-find-references :which-key "find references")
-   "gd"  '(lsp-find-definition :which-key "find definition")
+   "gr"  '(xref-find-references :which-key "find references")
+   "gd"  '(xref-find-definitions :which-key "find definition")
 
    ;; Workspaces
    "M-1" 'eyebrowse-switch-to-window-config-1
@@ -530,7 +527,8 @@ Arguments the same as in `compile'."
    ;; LSP
    "l"   '(:ignore t :which-key "LSP")
    "ls"  '(imenu :which-key "list symbols")
-   "ln"  '(lsp-rename :which-key "rename symbol")
+   "ln"  '(eglot-rename :which-key "rename symbol")
+   "lc"  '(eglot-code-actions :which-key "trigger code action")
 
    ;; Buffer
    "b"   '(ido-switch-buffer :which-key "switch buffer")
