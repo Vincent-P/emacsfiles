@@ -84,6 +84,14 @@ Arguments the same as in `compile'."
 
 
 ;; --- use-package initialization
+
+(require 'package)
+(setq ackage-enable-at-startup nil)
+(setq package-archives
+      '(("org" . "https://orgmode.org/elpa/")
+        ("melpa" . "https://melpa.org/packages/")
+        ("gnu" . "https://elpa.gnu.org/packages/")))
+
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -190,7 +198,7 @@ Arguments the same as in `compile'."
 ;; git integration
 (use-package magit)
 
-;; vim bindings for magit
+;; TODO: find why it doesnt work / vim bindings for magit
 ;; (use-package evil-magit
 ;;  :after magit
 ;;  :init
@@ -210,12 +218,11 @@ Arguments the same as in `compile'."
   :config
   (yas-global-mode 1))
 
-;; Error reporting
-(use-package flycheck
-  :config
-  (define-fringe-bitmap 'circle-bmp "\x3c\x7e\xff\xff\xff\xff\x7e\x3c")
-  (flycheck-redefine-standard-error-levels nil 'circle-bmp)
-  )
+
+(define-fringe-bitmap 'circle-bmp "\x3c\x7e\xff\xff\xff\xff\x7e\x3c")
+(setq flymake-error-bitmap '(circle-bmp compilation-error)
+      flymake-warning-bitmap '(circle-bmp compilation-warning)
+      flymake-note-bitmap '(circle-bmp compilation-info))
 
 ;; completion package
 (use-package company
@@ -234,12 +241,13 @@ Arguments the same as in `compile'."
                (company-mode))))
 
 ;; tree-sitter based syntax highlighting
-;; (use-package tree-sitter
-;;   :init
-;;   (global-tree-sitter-mode)
-;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package tree-sitter
+  :init
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-;; (use-package tree-sitter-langs)
+;; TODO: make it work on windows
+; (use-package tree-sitter-langs)
 
 ;; (use-package ligature
 ;;   :load-path "elisp/ligature/"
@@ -321,22 +329,20 @@ Arguments the same as in `compile'."
   (after-init . org-roam-mode)
   :config
   (setq org-roam-directory "~/Dropbox/org/roam/")
+  (setq org-roam-dailies-directory "daily/")
   (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam--capture-get-point)
            "%?"
            :file-name "%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+TITLE: ${title} \n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_ALIAS: \n\n- tags :: "
+           :head "#+TITLE: ${title} \n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+HUGO_BASE_DIR: ~/Dropbox/website/\n#+HUGO_SECTION: notes\n\n- tags :: "
            :unnarrowed t))
 
         org-roam-capture-ref-templates '(("r" "ref" plain (function org-roam--capture-get-point)
                                           "%?"
                                           :file-name "%<%Y%m%d%H%M%S>-${slug}"
-                                          :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_KEY: ${ref}\n#+ROAM_ALIAS: \n\n- link :: [[${ref}]]\n- tags :: "
+                                          :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_KEY: ${ref}\n#+HUGO_BASE_DIR: ~/Dropbox/website/\n#+HUGO_SECTION: notes\n\n- link :: [[${ref}]]\n- tags :: "
                                           :unnarrowed t)))
   )
-
-(require 'org-protocol)
-(require 'org-roam-protocol)
 
 (use-package company-org-roam
   :config
@@ -348,8 +354,6 @@ Arguments the same as in `compile'."
         deft-use-filter-string-for-filename t
         deft-default-extension "org"
         deft-directory "~/Dropbox/org/roam/"))
-
-(use-package pandoc-mode)
 
 (use-package org-roam-server
   :config
@@ -365,87 +369,16 @@ Arguments the same as in `compile'."
         org-roam-server-network-label-truncate-length 60
         org-roam-server-network-label-wrap-length 20))
 
+(use-package ox-hugo :after ox)
+
+;; Start the server to make the org-protocol bookmark works
+(require 'org-protocol)
+(require 'org-roam-protocol)
+(server-start)
+
 ;; ---
 
 ;; --- Programming languages
-
-;; Setup msvc toolchain
-(when (and nil (eq system-type 'windows-nt))
-  (setenv "PATH"
-          (concat
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\bin\\HostX64\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\VC\\VCPackages"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TeamFoundation\\Team Explorer"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\bin\\Roslyn"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Performance Tools\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Performance Tools"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Common\\VSPerfCollectionTools\\vs2019\\\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Common\\VSPerfCollectionTools\\vs2019\\"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64\\"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.18362.0\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\\\MSBuild\\Current\\Bin"
-           path-separator
-           "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\"
-           path-separator
-           (getenv "PATH")))
-
-  (setenv "INCLUDE"
-          (concat
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\include"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\include\\um"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\ucrt"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\shared"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\um"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\winrt"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.18362.0\\cppwinrt"
-           path-separator))
-
-  (setenv "LIB"
-          (concat
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\lib\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\lib\\um\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.18362.0\\ucrt\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.18362.0\\um\\x64"
-           path-separator))
-
-  (setenv "LIBPATH"
-          (concat
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\lib\\x64"
-           path-separator
-           "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29333\\lib\\x86\\store\\references"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.18362.0"
-           path-separator
-           "C:\\Program Files (x86)\\Windows Kits\\10\\References\\10.0.18362.0"
-           path-separator
-           "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319")))
 
 (require 'cc-mode)
 
