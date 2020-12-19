@@ -25,6 +25,7 @@
        (red_1 "todo")
        (orange_0 "coral")
        (red_1 "todo")
+       (green_0 "lime green")
 
        (bg_base bg_0)
        (region_bg bg_1)
@@ -39,6 +40,7 @@
        (error_color red_0)
        (warning_color orange_0)
        (info_color fg_base)
+       (success_color green_0)
        (search_bg blue_2)
        (whitespace_fg bg_3)
        )
@@ -90,6 +92,10 @@
    `(whitespace-newline ((t (:inherit whitespace-space))))
 
    ;; Errors
+   `(error ((t (:foreground ,error_color))))
+   `(success ((t (:foreground ,success_color))))
+   `(warning ((t (:foreground ,warning_color))))
+
    `(flycheck-error ((t (:underline (:color ,error_color :style line)))))
    `(flycheck-fringe-error ((t (:foreground ,error_color))))
    `(flyspell-incorrect ((t (:underline `(:color ,error_color :style line)))))
