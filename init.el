@@ -155,6 +155,8 @@ Arguments the same as in `compile'."
   :custom
   (evil-collection-company-use-tng nil) ;; tng is not compatible with lsp/yasnippet
   :init
+  (setq evil-magit-state 'normal
+        evil-magit-use-z-for-folds t)
   (evil-collection-init))
 
 ;; like vim-surround
@@ -198,14 +200,6 @@ Arguments the same as in `compile'."
 ;; git integration
 (use-package magit)
 
-;; TODO: find why it doesnt work / vim bindings for magit
-;; (use-package evil-magit
-;;  :after magit
-;;  :init
-;;  (setq evil-magit-state 'normal
-;;        evil-magit-use-z-for-folds t))
-
-
 (use-package eglot
   :config
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
@@ -230,15 +224,10 @@ Arguments the same as in `compile'."
   (setq company-begin-commands '(self-insert-command))
   (setq company-idle-delay .1)
   (setq company-minimum-prefix-length 1)
-  (setq company-show-numbers t)
   (setq company-tooltip-align-annotations 't)
-  (setq global-company-mode t)
-  (setq company-backends '(company-capf))
-  (add-hook 'emacs-lisp-mode-hook
-            '(lambda ()
-               (require 'company-elisp)
-               (push 'company-elisp company-backends)
-               (company-mode))))
+  ;; (setq global-company-mode t)
+  ;; (setq company-backends '(company-capf))
+  (add-hook 'after-init-hook 'global-company-mode))
 
 ;; tree-sitter based syntax highlighting
 (use-package tree-sitter
@@ -247,7 +236,7 @@ Arguments the same as in `compile'."
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 ;; TODO: make it work on windows
-; (use-package tree-sitter-langs)
+(use-package tree-sitter-langs)
 
 ;; (use-package ligature
 ;;   :load-path "elisp/ligature/"

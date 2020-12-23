@@ -152,6 +152,7 @@
    `(company-preview ((t (:background ,hl_bg))))
    `(company-preview-common ((t (:background ,hl_bg :underline t))))
    `(company-preview-search ((t (:inherit company-preview-common))))
+   `(company-tooltip-annotation ((t (:foreground ,link_fg))))
 
    ;; --- Org
    `(org-document-title ((t (:foreground ,fg_base :height 2.0))))

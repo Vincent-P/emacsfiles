@@ -153,6 +153,7 @@
    `(company-preview ((t (:background ,hl_bg))))
    `(company-preview-common ((t (:background ,hl_bg :underline t))))
    `(company-preview-search ((t (:inherit company-preview-common))))
+   `(company-tooltip-annotation ((t (:foreground ,link_fg))))
 
    ;; --- Rainbow delimiters, more satured colors
    `(rainbow-delimiters-base-error-face ((t (:foreground "indian red" :underline `(:color ,error_color :style line)))))
