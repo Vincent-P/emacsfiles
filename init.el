@@ -14,6 +14,8 @@
       (progn (load-theme 'mon-theme-light t) (setq current-theme 'mon-theme-light))
     (progn (load-theme 'mon-theme t) (setq current-theme 'mon-theme)))))
 
+(require 'project)
+
 (defun project-build (command &optional comint)
   "Run `compile' in the ${project root}/build directory.
 Arguments the same as in `compile'."
@@ -28,6 +30,49 @@ Arguments the same as in `compile'."
   (let* ((pr (project-current t))
          (default-directory (concat (project-root pr) "build")))
     (compile command comint)))
+
+(cl-defmethod project-root ((project (head local)))
+  (cdr project))
+
+(defun my--project-files-in-directory (dir)
+  "Use `fd' to list files in DIR."
+  (let* ((default-directory dir)
+         (localdir (file-local-name (expand-file-name dir)))
+         (command (format "fd -t f -0 . %s" localdir)))
+    (project--remote-file-names
+     (sort (split-string (shell-command-to-string command) "\0" t)
+           #'string<))))
+
+(cl-defmethod project-files ((project (head local)) &optional dirs)
+  "Override `project-files' to use `fd' in local projects."
+  (mapcan #'my--project-files-in-directory
+          (or dirs (list (project-root project)))))
+
+(defun my-project-try-local (dir)
+  "Determine if DIR is a non-Git project.
+DIR must include a .project file to be considered a project."
+  (let ((root (locate-dominating-file dir ".project")))
+    (and root (cons 'local root))))
+
+(defun my--backend (dir)
+  "Check if DIR is under Git, otherwise return nil."
+  (when (locate-dominating-file dir ".git")
+    'Git))
+
+(defun my-project-try-vc (dir)
+  "Determine if DIR is a project.
+This is a thin variant of `project-try-vc':
+- It takes only Git into consideration
+- It does not check for submodules"
+  (let* ((backend (my--backend dir))
+         (root
+          (when (eq backend 'Git)
+            (or (vc-file-getprop dir 'project-git-root)
+                (let ((root (vc-call-backend backend 'root dir)))
+                  (vc-file-setprop dir 'project-git-root root))))))
+    (and root (cons 'vc root))))
+
+(add-to-list 'project-find-functions 'my-project-try-local)
 
 ;; ----------------------------
 
@@ -175,16 +220,25 @@ Arguments the same as in `compile'."
   :init
   (selectrum-mode))
 
+;; Add better functions using selectrum
+(use-package consult
+  :init
+  (fset 'multi-occur #'consult-multi-occur)
+  :config
+  (setq consult-narrow-key "<") ;; (kbd "C-+")
+  ;; Enable previes
+  (consult-preview-mode))
+(use-package consult-selectrum
+  :demand t)
+
 ;; "Fuzzy" searching for selectrum and company
 (use-package prescient
   :custom
   (prescient-filter-method '(literal fuzzy)))
-
 (use-package company-prescient
   :after company
   :init
   (company-prescient-mode))
-
 (use-package selectrum-prescient
   :init
   (selectrum-prescient-mode))
@@ -200,11 +254,16 @@ Arguments the same as in `compile'."
 ;; git integration
 (use-package magit)
 
+(defun my/eglot-ensure ()
+  "Eglot ensure AND replace the format function to eglot-format"
+  (eglot-ensure)
+  (setq indent-region-function 'eglot-format))
+
 (use-package eglot
   :config
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  (add-hook 'c++-mode-hook 'eglot-ensure))
+  (add-hook 'c-mode-hook 'my/eglot-ensure)
+  (add-hook 'c++-mode-hook 'my/eglot-ensure))
 
 
 ;; Snippets system (to have better autocompletion from lsp servers that support snippets)
@@ -365,6 +424,19 @@ Arguments the same as in `compile'."
 (require 'org-roam-protocol)
 (server-start)
 
+(use-package deadgrep)
+
+(use-package mini-frame
+  :custom
+  ((mini-frame-show-parameters
+   '((top . 40)
+     (width . 0.7)
+     (left . 0.5)
+     (height . 15))))
+  :config
+  (setq mini-frame-resize nil)
+  )
+
 ;; ---
 
 ;; --- Programming languages
@@ -438,7 +510,7 @@ Arguments the same as in `compile'."
    "pp"  '(project-switch-project :which-key "switch project")
    "pb"  '(project-switch-to-buffer :which-key "switch buffer")
    "pf"  '(project-find-file :which-key "find file")
-   "p/"  '(project-find-regexp :which-key "find in project")
+   "p/"  '(deadgrep :which-key "find in project")
    "pc"  '(project-build :which-key "compile")
 
    ;; Files
@@ -448,12 +520,12 @@ Arguments the same as in `compile'."
 
    ;; LSP
    "l"   '(:ignore t :which-key "LSP")
-   "ls"  '(imenu :which-key "list symbols")
+   "ls"  '(consult-imenu :which-key "list symbols")
    "ln"  '(eglot-rename :which-key "rename symbol")
    "lc"  '(eglot-code-actions :which-key "trigger code action")
 
    ;; Buffer
-   "b"   '(ido-switch-buffer :which-key "switch buffer")
+   "b"   '(consult-buffer :which-key "switch buffer")
 
    ;; Git
    "g"   '(:ignore t :which-key "Git")
