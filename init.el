@@ -425,18 +425,11 @@ This is a thin variant of `project-try-vc':
 (server-start)
 
 (use-package deadgrep)
-
-(use-package mini-frame
-  :custom
-  ((mini-frame-show-parameters
-   '((top . 40)
-     (width . 0.7)
-     (left . 0.5)
-     (height . 15))))
-  :config
-  (setq mini-frame-resize nil)
-  )
-
+(use-package markdown-mode
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
 ;; ---
 
 ;; --- Programming languages
