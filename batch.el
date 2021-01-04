@@ -3,7 +3,11 @@
 (package-initialize)
 (require 'use-package)
 
-(use-package org)
+(use-package org
+  :config
+  (setq org-src-preserve-indentation nil
+        org-edit-src-content-indentation 0)
+  )
 
 (use-package org-roam
   :config

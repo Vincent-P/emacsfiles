@@ -360,6 +360,8 @@ This is a thin variant of `project-try-vc':
   ;; Redefine file opening without clobbering universal argumnet
   (define-key org-mode-map "\C-c\C-o" 'org-open-maybe)
   (add-hook 'auto-save-hook 'org-save-all-org-buffers)
+  (setq org-src-preserve-indentation nil
+        org-edit-src-content-indentation 0)
   )
 
 (use-package evil-org
@@ -388,7 +390,7 @@ This is a thin variant of `project-try-vc':
         org-roam-capture-ref-templates '(("r" "ref" plain (function org-roam--capture-get-point)
                                           "%?"
                                           :file-name "%<%Y%m%d%H%M%S>-${slug}"
-                                          :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_KEY: ${ref}\n#+HUGO_BASE_DIR: ~/Dropbox/website/\n#+HUGO_SECTION: notes\n\n- link :: [[${ref}]]\n- tags :: "
+                                          :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_KEY: ${ref}\n#+HUGO_BASE_DIR: ~/Dropbox/website/\n#+HUGO_SECTION: notes\n\n- link :: [[${ref}]]\n- tags :: \n\n${body}"
                                           :unnarrowed t)))
   )
 
