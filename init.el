@@ -150,6 +150,8 @@ This is a thin variant of `project-try-vc':
 
 ;; --- Packages
 
+(use-package undo-fu) ;; backport of emacs 28 undo-redo
+
 (defface my-evil-tag-face:normal '((t ())) "Face for evil normal tag.")
 (defface my-evil-tag-face:emacs '((t ())) "Face for evil normal tag.")
 (defface my-evil-tag-face:insert '((t ())) "Face for evil normal tag.")
@@ -161,7 +163,7 @@ This is a thin variant of `project-try-vc':
 ;; vim inside emacs
 (use-package evil
   :custom
-  (evil-undo-system 'undo-redo)
+  (evil-undo-system 'undo-fu)
   :init
   (setq evil-want-integration t) ;; required by evil-collection
   (setq evil-want-keybinding nil) ;; required by evil-collection
