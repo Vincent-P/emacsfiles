@@ -124,6 +124,8 @@ This is a thin variant of `project-try-vc':
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+; not possible to move in tmp so disable
+(setq create-lockfiles nil)
 
 ;; ---
 
@@ -454,6 +456,7 @@ This is a thin variant of `project-try-vc':
                               "../../src" "../../src/*" "../../src/*/*"
                               "../../../src ../../../src/*" "../../../src/*/*"))
 
+(use-package meson-mode)
 ;; ---
 
 ;; --- Keybindings
