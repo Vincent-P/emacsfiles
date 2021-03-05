@@ -1,11 +1,7 @@
-auto-save-list
-backup
-elpa
-.lsp*
-config.el*
-projectile*
-recentf
-smex-items
 .custom
-.cache
+auto-save-list/
+eln-cache/
+elpa/
+org-roam.db
+projects
 transient

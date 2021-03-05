@@ -34,6 +34,7 @@
 (set-face-attribute 'variable-pitch nil :family "ia Writer Quattro S" :height 120)
 (set-face-attribute 'mode-line nil :height 130)
 (add-hook 'text-mode-hook 'variable-pitch-mode)
+(add-hook 'html-mode-hook (lambda () (variable-pitch-mode -1)))
 
 ;; show whitespace
 ;; (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark )))

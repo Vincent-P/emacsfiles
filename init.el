@@ -127,6 +127,8 @@ This is a thin variant of `project-try-vc':
 ; not possible to move in tmp so disable
 (setq create-lockfiles nil)
 
+; Compile packages to native code when installing them
+(setq package-native-compile t)
 ;; ---
 
 
@@ -229,11 +231,7 @@ This is a thin variant of `project-try-vc':
   :init
   (fset 'multi-occur #'consult-multi-occur)
   :config
-  (setq consult-narrow-key "<") ;; (kbd "C-+")
-  ;; Enable previes
-  (consult-preview-mode))
-(use-package consult-selectrum
-  :demand t)
+  (setq consult-narrow-key "C-+"))
 
 ;; "Fuzzy" searching for selectrum and company
 (use-package prescient
@@ -376,10 +374,6 @@ This is a thin variant of `project-try-vc':
                                           :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_KEY: ${ref}\n#+HUGO_BASE_DIR: ~/Dropbox/website/\n#+HUGO_SECTION: notes\n\n- link :: [[${ref}]]\n- tags :: \n\n${body}"
                                           :unnarrowed t)))
   )
-
-(use-package company-org-roam
-  :config
-  (push 'company-org-roam company-backends))
 
 (use-package deft
   :config
