@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t; -*-
 
+
+;;; --- Utility functions
+
 (defun disable-all-themes ()
   "disable all active themes."
   (dolist (i custom-enabled-themes)
@@ -129,6 +132,17 @@ This is a thin variant of `project-try-vc':
 
 ; Compile packages to native code when installing them
 (setq package-native-compile t)
+;; ---
+
+;; --- Win32 PATH for unix tools like gzip, as and friends
+ (when (eq system-type 'windows-nt)
+    (setenv "PATH"
+            (concat
+             "C:\\msys64\\mingw64\\bin"
+             path-separator
+             "C:\\msys64\\usr\\bin"
+             path-separator
+             (getenv "PATH"))))
 ;; ---
 
 
