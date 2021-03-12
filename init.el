@@ -132,6 +132,7 @@ This is a thin variant of `project-try-vc':
 
 ; Compile packages to native code when installing them
 (setq package-native-compile t)
+(setq compile-command "ninja ")
 ;; ---
 
 ;; --- Win32 PATH for unix tools like gzip, as and friends
