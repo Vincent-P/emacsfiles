@@ -22,10 +22,10 @@
        (blue_1 "#265d73")
        (blue_2 "#52beff")
        (red_0 "firebrick")
-       (red_1 "todo")
+       (red_1 "salmon1")
        (orange_0 "coral")
-       (red_1 "todo")
        (green_0 "lime green")
+       (green_1 "DarkOliveGreen1")
 
        (bg_base bg_0)
        (region_bg bg_1)
@@ -43,6 +43,8 @@
        (success_color green_0)
        (search_bg blue_2)
        (whitespace_fg bg_3)
+       (sed_matches_color red_1)
+       (sed_replacement_color green_1)
        )
 
   ;; Set faces
@@ -75,6 +77,10 @@
    `(highlight  ((t (:background ,hl_bg))))
    `(lazy-highlight  ((t (:background ,hl_bg :underline t))))
    `(isearch ((t (:background ,search_bg))))
+
+   ;; --- Evil
+   `(evil-ex-substitute-matches ((t (:background ,sed_matches_color :underline t))))
+   `(evil-ex-substitute-replacement ((t (:background ,sed_replacement_color :underline t))))
 
    ;; --- Custom faces
    `(my-evil-tag-face:normal ((t (:inherit mode-line :foreground ,fg_base))))
